@@ -22,7 +22,7 @@ module.exports = class Agent {
 				let sum = 0;
 				for (let i = 0; i<o.length; i++)
 					sum += this.values[i]*o[i];
-				if (sum>=this.total/2)
+				if (sum>0)
 					return;
 			}
         }
