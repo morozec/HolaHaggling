@@ -107,7 +107,7 @@ module.exports = class Agent {
 		}
 
 		if (this.myLastOffer && this.values[this.myLastOfferIndex] < this.values[index]){
-			o[this.myLastOfferIndex]++;
+			o[this.myLastOfferIndex] = this.counts[this.myLastOfferIndex];
 		}
 		
 		this.myLastOfferIndex = index;
