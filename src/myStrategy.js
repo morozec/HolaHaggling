@@ -132,7 +132,7 @@ module.exports = class Agent {
 
 	isPoorOffer(o){
 		var sumValue = this.getOfferSumValue(o);
-		return sumValue < this.getMaxSumValue / 2;
+		return sumValue < this.getMaxSumValue() / 2;
 	}
 
 	getMaxSumValue(){
