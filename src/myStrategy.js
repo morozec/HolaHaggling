@@ -15,13 +15,14 @@ module.exports = class Agent {
     }
     offer(o){
         this.log(`${this.rounds} rounds left`);
-        
+				
         if (o)
         {
-			var suggestedSumValue = 0;
-			for (var i = 0; i < o.length; ++i)
-				suggestedSumValue += o[i] * this.values[i];			
+			var suggestedSumValue = this.getOfferSumValue(o);			
 			this.log(`suggested sum value: ${suggestedSumValue}`);
+
+			if (this.myLastOffer && suggestedSumValue >= this.getOfferSumValue(this.myLastOffer))
+				return;
 
 			if (this.rounds == this.max_rounds)
 			{
@@ -70,14 +71,15 @@ module.exports = class Agent {
 			o = this.getNewOffer(o);
 		}
 
-		var mySumValue = 0;
-		for (var i = 0; i < o.length; ++i){
-			mySumValue += o[i] * this.values[i];
-		}
+		var mySumValue = this.getOfferSumValue(o);		
 		this.log(`my sum value: ${mySumValue}`);
 		
 		this.myLastOffer = o;		
 		this.rounds--;
+		
+		if (suggestedSumValue && mySumValue <= suggestedSumValue)
+			return;
+
         return o;
 	}
 	
@@ -125,7 +127,16 @@ module.exports = class Agent {
 		{
 			this.myLastOfferIndex = null;
 			o = this.myLastOffer;
-		}
+		}		
+
 		return o;
+	}
+
+	getOfferSumValue(o){
+		var sumValue = 0;
+		for (var i = 0; i < o.length; ++i){
+			sumValue += o[i] * this.values[i];
+		}
+		return sumValue;
 	}
 };
