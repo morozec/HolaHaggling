@@ -110,26 +110,36 @@ module.exports = class Agent {
 			o[this.myLastOfferIndex] = this.counts[this.myLastOfferIndex];
 		}
 		
-		this.myLastOfferIndex = index;
+		
 		o[index]--;	
 		
-		//if current offer if zero value for me, suggest preveous one
-		var isZeroOffer = true;
-		for (var i = 0; i < o.length; ++i)
-		{
-			if (o[i] > 0)
-			{
-				isZeroOffer = false;
-				break
-			}
-		}
-		if (isZeroOffer)
-		{
-			this.myLastOfferIndex = null;
-			o = this.myLastOffer;
-		}		
-
+		//if current offer if zero value for me or too cheap, suggest preveous one
+		var isBadOffer = this.isZeroOffer(o) || this.isPoorOffer(o);
+		
+		if (isBadOffer) return this.myLastOffer;			
+			
+		this.myLastOfferIndex = index;	
 		return o;
+	}
+
+	isZeroOffer(o){
+		for (var i = 0; i < o.length; ++i)		
+			if (o[i] > 0)			
+				return false;		
+		
+		return true;
+	}
+
+	isPoorOffer(o){
+		var sumValue = this.getOfferSumValue(o);
+		return sumValue < this.getMaxSumValue / 2;
+	}
+
+	getMaxSumValue(){
+		var sum = 0;
+		for (var i = 0; i < this.counts.length; ++i)
+			sum += this.counts[i] * this.values[i];
+		return sum;
 	}
 
 	getOfferSumValue(o){
