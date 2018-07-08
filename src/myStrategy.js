@@ -50,59 +50,24 @@ module.exports = class Agent {
 		if (!this.myLastOffer)
 		{
 			o = this.counts.slice();
+			var hasZeroCounts = false;
 			for (let i = 0; i<o.length; i++)
 			{
 				if (!this.values[i])
+				{
 					o[i] = 0;
+					hasZeroCounts = true;
+				}
+			}
+
+			if (!hasZeroCounts){ //exclude offer, where enemy get nothing
+				o = this.getNewOffer(o);
 			}
 		}
 		else
 		{
 			o = this.myLastOffer.slice();
-
-			var index = -1;
-			var minValue = Number.MAX_VALUE;
-			
-			//find item with minimum value and decrement it in my offer
-			for (var i = 0; i < this.values.length; ++i)
-			{
-				if (o[i] == 0) continue;
-
-				//this item probably has zero value for my enemy
-				if (this.enemyZeroIndexes.includes(i)){
-					o[i] = this.counts[i];
-					continue;		
-				}
-
-				if (this.values[i] < minValue)
-				{
-					minValue = this.values[i];
-					index = i;
-				}
-			}
-
-			if (this.myLastOffer && this.values[this.myLastOfferIndex] < this.values[index]){
-				o[this.myLastOfferIndex]++;
-			}
-			
-			this.myLastOfferIndex = index;
-			o[index]--;	
-			
-			//if current offer if zero value for me, suggest preveous one
-			var isZeroOffer = true;
-			for (var i = 0; i < o.length; ++i)
-			{
-				if (o[i] > 0)
-				{
-					isZeroOffer = false;
-					break
-				}
-			}
-			if (isZeroOffer)
-			{
-				this.myLastOfferIndex = null;
-				o = this.myLastOffer;
-			}
+			o = this.getNewOffer(o);
 		}
 
 		var mySumValue = 0;
@@ -114,5 +79,53 @@ module.exports = class Agent {
 		this.myLastOffer = o;		
 		this.rounds--;
         return o;
-    }
+	}
+	
+	getNewOffer(o) {
+
+		var index = -1;
+		var minValue = Number.MAX_VALUE;
+		
+		//find item with minimum value and decrement it in my offer
+		for (var i = 0; i < this.values.length; ++i)
+		{
+			if (o[i] == 0) continue;
+
+			//this item probably has zero value for my enemy
+			if (this.enemyZeroIndexes.includes(i)){
+				o[i] = this.counts[i];
+				continue;		
+			}
+
+			if (this.values[i] < minValue)
+			{
+				minValue = this.values[i];
+				index = i;
+			}
+		}
+
+		if (this.myLastOffer && this.values[this.myLastOfferIndex] < this.values[index]){
+			o[this.myLastOfferIndex]++;
+		}
+		
+		this.myLastOfferIndex = index;
+		o[index]--;	
+		
+		//if current offer if zero value for me, suggest preveous one
+		var isZeroOffer = true;
+		for (var i = 0; i < o.length; ++i)
+		{
+			if (o[i] > 0)
+			{
+				isZeroOffer = false;
+				break
+			}
+		}
+		if (isZeroOffer)
+		{
+			this.myLastOfferIndex = null;
+			o = this.myLastOffer;
+		}
+		return o;
+	}
 };
