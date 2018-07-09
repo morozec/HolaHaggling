@@ -21,8 +21,6 @@ module.exports = class Agent {
 		this.possibleOffers.sort(comparator(this.values));
 		
 		
-		for (var i in this.possibleOffers)
-			this.log(this.possibleOffers[i]);
 
 		this.prevOfferIndex = -1;
 	}
@@ -32,9 +30,9 @@ module.exports = class Agent {
 		for (var i in this.possibleOffers){
 			var po = this.possibleOffers[i];
 			var hasZeroValue = false;
-			for (var i = 0; i < po.length; ++i){
-				if (this.values[i] > 0) continue;
-				if (po[i] > 0){
+			for (var j = 0; j < po.length; ++j){
+				if (this.values[j] > 0) continue;
+				if (po[j] > 0){
 					hasZeroValue = true;
 					break
 				}
@@ -54,6 +52,25 @@ module.exports = class Agent {
 		}
 		return res;
 	}
+
+	getEnemyZeroIndexesOffers(){
+		var res = [];
+		for (var i in this.possibleOffers){
+			var po = this.possibleOffers[i];
+			for (var j = 0; j < po.length; ++j){
+				if (!this.enemyZeroIndexes.includes(j)){
+					res.push(po);
+				}
+				else{
+					if (po[j] == this.counts[j]){
+						res.push(po);
+					}
+				}
+					
+			}
+		}
+		return res;
+	}
 	
     offer(o){
 		this.log(`${this.rounds} rounds left`);	
@@ -67,7 +84,7 @@ module.exports = class Agent {
 			if (this.prevOfferIndex >= 0 && suggestedSumValue >= this.getOfferSumValue(this.possibleOffers[this.prevOfferIndex]))
 				return;
 
-			if (this.rounds == this.max_rounds)
+			if (this.rounds == this.max_rounds)//TODO: 4 раунд
 			{
 				for (let i = 0; i<o.length; i++){
 					if (o[i] == this.counts[i]){
@@ -75,6 +92,9 @@ module.exports = class Agent {
 						this.enemyZeroIndexes.push(i);
 					}
 				}
+				this.possibleOffers = this.getEnemyZeroIndexesOffers();//TODO:обновить индекс
+				for (var i in this.possibleOffers)
+					this.log(this.possibleOffers[i]);
 			}
 
 			if (!this.isFirstPlayer && this.rounds == 1) 
@@ -119,7 +139,8 @@ module.exports = class Agent {
 		}
 		*/
 
-		var currOfferIndex = this.prevOfferIndex + 1;
+		var currOfferIndex = this.prevOfferIndex < this.possibleOffers.length - 1 ? this.prevOfferIndex + 1 : this.prevOfferIndex;
+		
 		var currOffer = this.possibleOffers[currOfferIndex];
 		var mySumValue = this.getOfferSumValue(currOffer);		
 		this.log(`my sum value: ${mySumValue}`);		
