@@ -2,8 +2,7 @@
 
 module.exports = class Agent {
     constructor(me, counts, values, max_rounds, log){
-		this.counts = counts;
-		
+        this.counts = counts;
         this.values = values;
         this.rounds = max_rounds;
         this.log = log;
@@ -12,46 +11,17 @@ module.exports = class Agent {
             this.total += counts[i]*values[i];
 		
 		this.isFirstPlayer = false;
-		this.enemyZeroIndexes = []; 	
-				
-
-		this.possibleOffers = this.getPossibleOffersRec(0);	
-		this.possibleOffers = this.getNotZeroValuesOffers();
-		this.possibleOffers.sort(comparator(this.values));
-		
-		for (var i in this.possibleOffers)
-			this.log(this.possibleOffers[i]);
-
-		this.prevOfferIndex = -1;
-	}
-
-	getNotZeroValuesOffers(){
-		var res = [];
-		for (i in this.possibleOffers){
-			var po = this.possibleOffers[i];
-			var hasZeroValue = false;
-			for (var i = 0; i < po.length; ++i){
-				if (this.values[i] > 0) continue;
-				if (po[i] > 0){
-					hasZeroValue = true;
-					break
-				}
-			}
-			if (!hasZeroValue) res.push(po);
-		}
-		return res;
-	}
-	
+		this.enemyZeroIndexes = []; 
+    }
     offer(o){
-		this.log(`${this.rounds} rounds left`);	
-		
+        //this.log(`${this.rounds} rounds left`);
 				
         if (o)
         {
 			var suggestedSumValue = this.getOfferSumValue(o);			
 			//this.log(`suggested sum value: ${suggestedSumValue}`);
 
-			if (this.prevOfferIndex >= 0 && suggestedSumValue >= this.getOfferSumValue(this.possibleOffers[this.prevOfferIndex]))
+			if (this.myLastOffer && suggestedSumValue >= this.getOfferSumValue(this.myLastOffer))
 				return;
 
 			if (this.rounds == this.max_rounds)
@@ -77,11 +47,7 @@ module.exports = class Agent {
 		{
 			this.isFirstPlayer = true;
 		}
-
-
-
-
-		/*
+		
 		if (!this.myLastOffer)
 		{
 			o = this.counts.slice();
@@ -104,20 +70,17 @@ module.exports = class Agent {
 			o = this.myLastOffer.slice();
 			o = this.getNewOffer(o);
 		}
-		*/
 
-		var currOfferIndex = this.prevOfferIndex + 1;
-		var currOffer = this.possibleOffers[currOfferIndex];
-		var mySumValue = this.getOfferSumValue(currOffer);		
-		this.log(`my sum value: ${mySumValue}`);		
-			
+		var mySumValue = this.getOfferSumValue(o);		
+		//this.log(`my sum value: ${mySumValue}`);
+		
+		this.myLastOffer = o;		
 		this.rounds--;
-		this.prevOfferIndex = currOfferIndex;
 		
 		if (suggestedSumValue && mySumValue <= suggestedSumValue)
 			return;
 
-        return currOffer;
+        return o;
 	}
 	
 	getNewOffer(o) {
@@ -179,48 +142,11 @@ module.exports = class Agent {
 		return sum;
 	}
 
-		
-
-	getPossibleOffersRec(index){
-		var count = this.counts[index];
-		var currRes = []
-		for (var i = 0; i <= count; ++i){
-			currRes.push([i]);
+	getOfferSumValue(o){
+		var sumValue = 0;
+		for (var i = 0; i < o.length; ++i){
+			sumValue += o[i] * this.values[i];
 		}
-
-		if (index == this.counts.length - 1)		
-			return currRes;
-		
-		var nextRes = this.getPossibleOffersRec(index + 1);
-		var res = [];
-		for (var i = 0; i < currRes.length; ++i){				
-			for (var arrI in nextRes){				
-				res.push(currRes[i].concat(nextRes[arrI]));			
-			}			
-		}
-		return res;
+		return sumValue;
 	}
-	
-
-	getOfferSumValue(o){		
-		return getOfferSumValue(o, this.values);
-	}
-	
 };
-
-function getOfferSumValue(o, values){
-	var sumValue = 0;
-	for (var i = 0; i < o.length; ++i){
-		sumValue += o[i] * values[i];
-	}
-	return sumValue;
-}
-
-function comparator(values){
-	return function(offerA, offerB){
-		return -getOfferSumValue(offerA, values) + getOfferSumValue(offerB, values)
-	}
-}
-
-
-
