@@ -17,7 +17,9 @@ module.exports = class Agent {
 
 		this.possibleOffers = this.getPossibleOffersRec(0);	
 		this.possibleOffers = this.getNotZeroValuesOffers();
+		this.possibleOffers = this.getNotMaxCountOffers();
 		this.possibleOffers.sort(comparator(this.values));
+		
 		
 		for (var i in this.possibleOffers)
 			this.log(this.possibleOffers[i]);
@@ -27,7 +29,7 @@ module.exports = class Agent {
 
 	getNotZeroValuesOffers(){
 		var res = [];
-		for (i in this.possibleOffers){
+		for (var i in this.possibleOffers){
 			var po = this.possibleOffers[i];
 			var hasZeroValue = false;
 			for (var i = 0; i < po.length; ++i){
@@ -41,6 +43,17 @@ module.exports = class Agent {
 		}
 		return res;
 	}
+
+	getNotMaxCountOffers(){
+		var res = [];
+		var maxCount = this.getMaxCount();
+		for (var i in this.possibleOffers){
+			var po = this.possibleOffers[i];
+			var count = this.getOfferCount(po);
+			if (count < maxCount) res.push(po);
+		}
+		return res;
+	}
 	
     offer(o){
 		this.log(`${this.rounds} rounds left`);	
@@ -49,7 +62,7 @@ module.exports = class Agent {
         if (o)
         {
 			var suggestedSumValue = this.getOfferSumValue(o);			
-			//this.log(`suggested sum value: ${suggestedSumValue}`);
+			this.log(`suggested sum value: ${suggestedSumValue}`);
 
 			if (this.prevOfferIndex >= 0 && suggestedSumValue >= this.getOfferSumValue(this.possibleOffers[this.prevOfferIndex]))
 				return;
@@ -179,6 +192,7 @@ module.exports = class Agent {
 		return sum;
 	}
 
+	
 		
 
 	getPossibleOffersRec(index){
@@ -205,6 +219,18 @@ module.exports = class Agent {
 	getOfferSumValue(o){		
 		return getOfferSumValue(o, this.values);
 	}
+
+	getOfferCount(o){
+		var count = 0;
+		for (var i = 0; i < o.length; ++i)
+			count += o[i];
+		return count;
+	}
+
+	getMaxCount(){
+		return this.getOfferCount(this.counts);
+	}
+
 	
 };
 
