@@ -60,15 +60,15 @@ module.exports = class Agent {
 		for (var i in this.possibleOffers){
 			var po = this.possibleOffers[i];
 
-			var hasZero = false;
+			var needRemove = false;
 			for (var j = 0; j < po.length; ++j){
-				if (this.enemyZeroIndexes.includes(j) && po[j] < this.counts[j]){
-					hasZero = true;
+				if (this.enemyZeroIndexes.includes(j) && po[j] < this.counts[j] && this.values[j] > 0){
+					needRemove = true;
 					break;
 				}
 			}
 
-			if (!hasZero){
+			if (!needRemove){
 				res.push(po)
 			}
 			else if (i == 0){ //0 offer is removed. need to shift index
@@ -88,7 +88,7 @@ module.exports = class Agent {
 
 			if (this.prevOfferIndex >= 0 && suggestedSumValue >= this.getOfferSumValue(this.possibleOffers[this.prevOfferIndex]))
 				return;
-
+			
 			if (this.rounds == this.max_rounds || 
 				this.isFirstPlayer && this.rounds == this.max_rounds - 1)
 			{
@@ -102,6 +102,7 @@ module.exports = class Agent {
 				for (var i in this.possibleOffers)
 					this.log(this.possibleOffers[i]);
 			}
+			
 
 			if (!this.isFirstPlayer && this.rounds == 1) 
 			{
@@ -116,12 +117,25 @@ module.exports = class Agent {
 		{			
 			this.isFirstPlayer = true;
 		}
-
+		
 		
 
-		var currOfferIndex = this.prevOfferIndex < this.possibleOffers.length - 1 ? this.prevOfferIndex + 1 : this.prevOfferIndex;
+		var currOfferIndex = 
+			this.prevOfferIndex < this.possibleOffers.length - 1 ? 
+				this.prevOfferIndex + 1 : 
+				this.prevOfferIndex;
 		
 		var currOffer = this.possibleOffers[currOfferIndex];
+		
+		//if current offer if zero value for me or too cheap, suggest preveous one		
+		var isBadOffer = this.isZeroOffer(currOffer) || this.isPoorOffer(currOffer);
+		
+		if (isBadOffer){
+			currOfferIndex = this.prevOfferIndex;
+			currOffer = this.possibleOffers[currOfferIndex];
+		}
+		
+
 		var mySumValue = this.getOfferSumValue(currOffer);		
 		this.log(`my sum value: ${mySumValue}`);		
 			
