@@ -4,7 +4,8 @@ module.exports = class Agent {
     constructor(me, counts, values, max_rounds, log){
 		this.counts = counts;
 		
-        this.values = values;
+		this.values = values;
+		this.max_rounds = max_rounds
         this.rounds = max_rounds;
         this.log = log;
         this.total = 0;
@@ -19,7 +20,8 @@ module.exports = class Agent {
 		this.possibleOffers = this.getNotZeroValuesOffers();
 		this.possibleOffers = this.getNotMaxCountOffers();
 		this.possibleOffers.sort(comparator(this.values));
-		
+		for (var i in this.possibleOffers)
+			this.log(this.possibleOffers[i]);
 		
 
 		this.prevOfferIndex = -1;
@@ -57,16 +59,20 @@ module.exports = class Agent {
 		var res = [];
 		for (var i in this.possibleOffers){
 			var po = this.possibleOffers[i];
+
+			var hasZero = false;
 			for (var j = 0; j < po.length; ++j){
-				if (!this.enemyZeroIndexes.includes(j)){
-					res.push(po);
+				if (this.enemyZeroIndexes.includes(j) && po[j] < this.counts[j]){
+					hasZero = true;
+					break;
 				}
-				else{
-					if (po[j] == this.counts[j]){
-						res.push(po);
-					}
-				}
-					
+			}
+
+			if (!hasZero){
+				res.push(po)
+			}
+			else if (i == 0){ //0 offer is removed. need to shift index
+				this.prevOfferIndex = -1;
 			}
 		}
 		return res;
@@ -74,7 +80,6 @@ module.exports = class Agent {
 	
     offer(o){
 		this.log(`${this.rounds} rounds left`);	
-		
 				
         if (o)
         {
@@ -84,7 +89,8 @@ module.exports = class Agent {
 			if (this.prevOfferIndex >= 0 && suggestedSumValue >= this.getOfferSumValue(this.possibleOffers[this.prevOfferIndex]))
 				return;
 
-			if (this.rounds == this.max_rounds)//TODO: 4 раунд
+			if (this.rounds == this.max_rounds || 
+				this.isFirstPlayer && this.rounds == this.max_rounds - 1)
 			{
 				for (let i = 0; i<o.length; i++){
 					if (o[i] == this.counts[i]){
@@ -92,7 +98,7 @@ module.exports = class Agent {
 						this.enemyZeroIndexes.push(i);
 					}
 				}
-				this.possibleOffers = this.getEnemyZeroIndexesOffers();//TODO:обновить индекс
+				this.possibleOffers = this.getEnemyZeroIndexesOffers();
 				for (var i in this.possibleOffers)
 					this.log(this.possibleOffers[i]);
 			}
@@ -107,37 +113,11 @@ module.exports = class Agent {
 			}
         }
 		else
-		{
+		{			
 			this.isFirstPlayer = true;
 		}
 
-
-
-
-		/*
-		if (!this.myLastOffer)
-		{
-			o = this.counts.slice();
-			var hasZeroCounts = false;
-			for (let i = 0; i<o.length; i++)
-			{
-				if (!this.values[i])
-				{
-					o[i] = 0;
-					hasZeroCounts = true;
-				}
-			}
-
-			if (!hasZeroCounts){ //exclude offer, where enemy get nothing
-				o = this.getNewOffer(o);
-			}
-		}
-		else
-		{
-			o = this.myLastOffer.slice();
-			o = this.getNewOffer(o);
-		}
-		*/
+		
 
 		var currOfferIndex = this.prevOfferIndex < this.possibleOffers.length - 1 ? this.prevOfferIndex + 1 : this.prevOfferIndex;
 		
