@@ -287,10 +287,12 @@ module.exports = class Agent {
 		}
 
 		var res = [];
-		var maxReduced = 0;
-		var minNotReduced = Number.MAX_SAFE_INTEGER;
+		
 		for (var i = 0; i < this.possibleEnemyValues.length; ++i){
 			var pev = this.possibleEnemyValues[i];
+
+			var maxReduced = 0;
+			var minNotReduced = Number.MAX_SAFE_INTEGER;
 			for (var j = 0; j < pev.length; ++j){
 				if (isRedused[j]){
 					if (pev[j] > maxReduced){
@@ -303,7 +305,7 @@ module.exports = class Agent {
 					}
 				}
 			}
-			if (maxReduced < minNotReduced){
+			if (maxReduced <= minNotReduced){
 				res.push(pev);
 			}
 		}
