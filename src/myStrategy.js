@@ -222,14 +222,10 @@ module.exports = class Agent {
 		return possibleEnemyValues;
 	}
 
-	getPossibleEnemyValuesRec(offer, currSumValue, index){
-		//this.log(offer);
-		//this.log(currSumValue);
-		//this.log(index);		
+	getPossibleEnemyValuesRec(offer, currSumValue, index){	
 		
 		if (index == offer.length - 1){
-			if (offer[index] == 0){
-				//this.log(currSumValue);
+			if (offer[index] == 0){				
 				if (currSumValue == 0) return [0];
 				else return null;
 			}
@@ -250,12 +246,10 @@ module.exports = class Agent {
 		else{
 
 			var i = 1;
-			while (currSumValue - i * this.counts[index] >= 0){
-			//for (var i = 1; i <= currSumValue; ++i){
+			while (currSumValue - i * this.counts[index] >= 0){			
 				var nextVariants = this.getPossibleEnemyValuesRec(offer, currSumValue - i * this.counts[index], index + 1)
 				for (var j in nextVariants){
-					var nextVariant = nextVariants[j];
-					//this.log(nextVariant)
+					var nextVariant = nextVariants[j];					
 					if (nextVariant != null){
 						
 						variants.push([i].concat(nextVariant))
@@ -264,7 +258,7 @@ module.exports = class Agent {
 				i++;
 			}
 		}
-		//this.log(variants);
+		
 		return variants;
 	}
 
