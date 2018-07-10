@@ -21,10 +21,11 @@ module.exports = class Agent {
 		this.possibleOffers = this.getNotMaxCountOffers();
 		this.possibleOffers.sort(comparator(this.values));
 		//for (var i in this.possibleOffers)
-		//	this.log(this.possibleOffers[i]);
-		
+		//	this.log(this.possibleOffers[i]);		
 
 		this.prevOfferIndex = -1;
+		this.possibleEnemyValues = null;
+		this.previousEnemyOffer = null;
 	}
 
 	getNotZeroValuesOffers(){
@@ -83,9 +84,17 @@ module.exports = class Agent {
 				
         if (o)
         {
-			var possibleEnemyValues = this.getPossibleEnemyValues(o);
-			for (var i in possibleEnemyValues)
-				this.log(possibleEnemyValues[i]);
+			var enemyOffer = this.getEnemyOffer(o);
+			if (this.possibleEnemyValues == null){
+				this.possibleEnemyValues = this.getPossibleEnemyValues(enemyOffer);				
+			}
+			else{
+				this.possibleEnemyValues = this.updatePossibleEnemyValues(enemyOffer);
+			}
+			this.previousEnemyOffer = enemyOffer;
+
+			for (var i in this.possibleEnemyValues)
+					this.log(this.possibleEnemyValues[i]);
 
 			var suggestedSumValue = this.getOfferSumValue(o);			
 			this.log(`suggested sum value: ${suggestedSumValue}`);
@@ -196,6 +205,9 @@ module.exports = class Agent {
 		return res;
 	}
 	
+	getOfferSumValueWithValues(o, values){
+		return getOfferSumValue(o, values);
+	}
 
 	getOfferSumValue(o){		
 		return getOfferSumValue(o, this.values);
@@ -212,12 +224,15 @@ module.exports = class Agent {
 		return this.getOfferCount(this.counts);
 	}
 
-
-	getPossibleEnemyValues(offer){	
+	getEnemyOffer(offer){
 		var enemyOffer = [];
 		for (var i = 0; i < offer.length; ++i){
 			enemyOffer.push(this.counts[i] - offer[i]);
 		}	
+		return enemyOffer;
+	}
+
+	getPossibleEnemyValues(enemyOffer){			
 		var possibleEnemyValues = this.getPossibleEnemyValuesRec(enemyOffer, this.getMaxSumValue(), 0)
 		return possibleEnemyValues;
 	}
@@ -260,6 +275,39 @@ module.exports = class Agent {
 		}
 		
 		return variants;
+	}
+
+	updatePossibleEnemyValues(enemyOffer){		
+		var reducedIndexes = [];
+
+		var isRedused = {};
+		for (var i = 0; i < enemyOffer.length; ++i){
+			var delta = enemyOffer[i] - this.previousEnemyOffer[i];
+			isRedused[i] = delta < 0;			
+		}
+
+		var res = [];
+		var maxReduced = 0;
+		var minNotReduced = Number.MAX_SAFE_INTEGER;
+		for (var i = 0; i < this.possibleEnemyValues.length; ++i){
+			var pev = this.possibleEnemyValues[i];
+			for (var j = 0; j < pev.length; ++j){
+				if (isRedused[j]){
+					if (pev[j] > maxReduced){
+						maxReduced = pev[j];
+					}					
+				}
+				else{
+					if (pev[j] != 0 && pev[j] < minNotReduced){
+						minNotReduced = pev[j];
+					}
+				}
+			}
+			if (maxReduced < minNotReduced){
+				res.push(pev);
+			}
+		}
+		return res;
 	}
 
 	
