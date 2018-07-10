@@ -20,8 +20,8 @@ module.exports = class Agent {
 		this.possibleOffers = this.getNotZeroValuesOffers();
 		this.possibleOffers = this.getNotMaxCountOffers();
 		this.possibleOffers.sort(comparator(this.values));
-		for (var i in this.possibleOffers)
-			this.log(this.possibleOffers[i]);
+		//for (var i in this.possibleOffers)
+		//	this.log(this.possibleOffers[i]);
 		
 
 		this.prevOfferIndex = -1;
@@ -83,6 +83,10 @@ module.exports = class Agent {
 				
         if (o)
         {
+			var possibleEnemyValues = this.getPossibleEnemyValues(o);
+			for (var i in possibleEnemyValues)
+				this.log(possibleEnemyValues[i]);
+
 			var suggestedSumValue = this.getOfferSumValue(o);			
 			this.log(`suggested sum value: ${suggestedSumValue}`);
 
@@ -99,8 +103,8 @@ module.exports = class Agent {
 					}
 				}
 				this.possibleOffers = this.getEnemyZeroIndexesOffers();
-				for (var i in this.possibleOffers)
-					this.log(this.possibleOffers[i]);
+				//for (var i in this.possibleOffers)
+				//	this.log(this.possibleOffers[i]);
 			}
 			
 
@@ -148,44 +152,6 @@ module.exports = class Agent {
         return currOffer;
 	}
 	
-	getNewOffer(o) {
-
-		var index = -1;
-		var minValue = Number.MAX_VALUE;
-		
-		//find item with minimum value and decrement it in my offer
-		for (var i = 0; i < this.values.length; ++i)
-		{
-			if (o[i] == 0) continue;
-
-			//this item probably has zero value for my enemy
-			if (this.enemyZeroIndexes.includes(i)){
-				o[i] = this.counts[i];
-				continue;		
-			}
-
-			if (this.values[i] < minValue)
-			{
-				minValue = this.values[i];
-				index = i;
-			}
-		}
-
-		if (this.myLastOffer && this.values[this.myLastOfferIndex] < this.values[index]){
-			o[this.myLastOfferIndex] = this.counts[this.myLastOfferIndex];
-		}
-		
-		
-		o[index]--;	
-		
-		//if current offer if zero value for me or too cheap, suggest preveous one
-		var isBadOffer = this.isZeroOffer(o) || this.isPoorOffer(o);
-		
-		if (isBadOffer) return this.myLastOffer;			
-			
-		this.myLastOfferIndex = index;	
-		return o;
-	}
 
 	isZeroOffer(o){
 		for (var i = 0; i < o.length; ++i)		
@@ -244,6 +210,62 @@ module.exports = class Agent {
 
 	getMaxCount(){
 		return this.getOfferCount(this.counts);
+	}
+
+
+	getPossibleEnemyValues(offer){	
+		var enemyOffer = [];
+		for (var i = 0; i < offer.length; ++i){
+			enemyOffer.push(this.counts[i] - offer[i]);
+		}	
+		var possibleEnemyValues = this.getPossibleEnemyValuesRec(enemyOffer, this.getMaxSumValue(), 0)
+		return possibleEnemyValues;
+	}
+
+	getPossibleEnemyValuesRec(offer, currSumValue, index){
+		//this.log(offer);
+		//this.log(currSumValue);
+		//this.log(index);		
+		
+		if (index == offer.length - 1){
+			if (offer[index] == 0){
+				//this.log(currSumValue);
+				if (currSumValue == 0) return [0];
+				else return null;
+			}
+			if (currSumValue == 0) return null;
+			if (currSumValue % this.counts[index] != 0) return null;
+			return [currSumValue / this.counts[index]];
+		}
+
+		var variants = []
+		if (offer[index] == 0){			
+			var nextVariants = this.getPossibleEnemyValuesRec(offer, currSumValue, index + 1)
+			for (var i in nextVariants){
+				var nextVariant = nextVariants[i];
+				if (nextVariant != null)
+					variants.push([0].concat(nextVariant))
+			}
+		}
+		else{
+
+			var i = 1;
+			while (currSumValue - i * this.counts[index] >= 0){
+			//for (var i = 1; i <= currSumValue; ++i){
+				var nextVariants = this.getPossibleEnemyValuesRec(offer, currSumValue - i * this.counts[index], index + 1)
+				for (var j in nextVariants){
+					var nextVariant = nextVariants[j];
+					//this.log(nextVariant)
+					if (nextVariant != null){
+						
+						variants.push([i].concat(nextVariant))
+					}
+				}
+				i++;
+			}
+		}
+		//this.log(variants);
+		return variants;
 	}
 
 	
