@@ -150,19 +150,45 @@ module.exports = class Agent {
 		
 
 		var mySumValue = this.getOfferSumValue(currOffer);		
-		this.log(`my sum value: ${mySumValue}`);		
-			
-		this.rounds--;
-		this.prevOfferIndex = currOfferIndex;
 		
+		
+		this.log(`my sum value: ${mySumValue}`);				
+		
+		
+		if (this.prevOfferIndex >= 0){
+			var prevOffer = this.possibleOffers[this.prevOfferIndex]
+			var myPrevSumValue = this.getOfferSumValue(prevOffer)
+			var minEnemyValue = Number.MAX_SAFE_INTEGER;
+			var minPrevEnemyValue = Number.MAX_SAFE_INTEGER;
+			var enemyCurrOffer = this.getEnemyOffer(currOffer);
+			var enemyPrevOffer = this.getEnemyOffer(prevOffer)
+
+			for (var i in this.possibleEnemyValues){
+				var pev = this.possibleEnemyValues[i]; 	
+				var enemyValue = this.getOfferSumValueWithValues(enemyCurrOffer, pev)
+				if (enemyValue < minEnemyValue) minEnemyValue = enemyValue;
+				var prevEnemyValue = this.getOfferSumValueWithValues(enemyPrevOffer, pev)
+				if (prevEnemyValue < minPrevEnemyValue) minPrevEnemyValue = prevEnemyValue;
+
+				this.log(`${pev} (${enemyValue}) (${this.getOfferSumValueWithValues(enemyOffer, pev)})`);
+			}
+
+			this.log(`${myPrevSumValue} ${minPrevEnemyValue} ${mySumValue} ${minEnemyValue}`)
+
+			if (myPrevSumValue + minPrevEnemyValue >= mySumValue + minEnemyValue){
+				if (mySumValue <= minPrevEnemyValue){
+					this.rounds--;
+					this.prevOfferIndex = currOfferIndex;	
+					return prevOffer;
+				}
+			}
+		}
+
+		this.rounds--;
+		this.prevOfferIndex = currOfferIndex;			
+
 		if (suggestedSumValue && mySumValue <= suggestedSumValue)
 			return;
-
-		var enemyCurrOffer = this.getEnemyOffer(currOffer);
-		for (var i in this.possibleEnemyValues){
-			var pev = this.possibleEnemyValues[i]; 		
-			this.log(`${pev} (${this.getOfferSumValueWithValues(enemyCurrOffer, pev)}) (${this.getOfferSumValueWithValues(enemyOffer, pev)})`);
-		}
 
         return currOffer;
 	}
