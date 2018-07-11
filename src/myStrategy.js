@@ -94,10 +94,7 @@ module.exports = class Agent {
 			if (this.prevOfferIndex >= 0)
 				this.possibleEnemyValues = this.updatePossibleEnemyValuesByMyOffer(enemyOffer, this.possibleOffers[this.prevOfferIndex])
 
-			this.previousEnemyOffer = enemyOffer;
-
-			for (var i in this.possibleEnemyValues)
-					this.log(this.possibleEnemyValues[i]);
+			this.previousEnemyOffer = enemyOffer;			
 
 			var suggestedSumValue = this.getOfferSumValue(o);			
 			this.log(`suggested sum value: ${suggestedSumValue}`);
@@ -160,6 +157,12 @@ module.exports = class Agent {
 		
 		if (suggestedSumValue && mySumValue <= suggestedSumValue)
 			return;
+
+		var enemyCurrOffer = this.getEnemyOffer(currOffer);
+		for (var i in this.possibleEnemyValues){
+			var pev = this.possibleEnemyValues[i]; 		
+			this.log(`${pev} (${this.getOfferSumValueWithValues(enemyCurrOffer, pev)}) (${this.getOfferSumValueWithValues(enemyOffer, pev)})`);
+		}
 
         return currOffer;
 	}
