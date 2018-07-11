@@ -91,6 +91,9 @@ module.exports = class Agent {
 			else{
 				this.possibleEnemyValues = this.updatePossibleEnemyValues(enemyOffer);
 			}
+			if (this.prevOfferIndex >= 0)
+				this.possibleEnemyValues = this.updatePossibleEnemyValuesByMyOffer(enemyOffer, this.possibleOffers[this.prevOfferIndex])
+
 			this.previousEnemyOffer = enemyOffer;
 
 			for (var i in this.possibleEnemyValues)
@@ -277,16 +280,7 @@ module.exports = class Agent {
 		return variants;
 	}
 
-	updatePossibleEnemyValues(enemyOffer){		
-		var reducedIndexes = [];
-		/*
-		var isRedused = {};
-		for (var i = 0; i < enemyOffer.length; ++i){
-			var delta = enemyOffer[i] - this.previousEnemyOffer[i];
-			isRedused[i] = delta < 0;			
-		}
-		*/
-
+	updatePossibleEnemyValues(enemyOffer){
 		var res = [];
 		
 		for (var i = 0; i < this.possibleEnemyValues.length; ++i){
@@ -315,8 +309,23 @@ module.exports = class Agent {
 		}
 		return res;
 	}
-
 	
+	updatePossibleEnemyValuesByMyOffer(enemyOffer, myOffer){
+		var res = [];
+		var myEnemyOffer = this.getEnemyOffer(myOffer);
+		for (var i = 0; i < this.possibleEnemyValues.length; ++i){
+			var pev = this.possibleEnemyValues[i];
+			var enemyOfferValue = this.getOfferSumValueWithValues(enemyOffer, pev);
+			var myEnemyOfferValue = this.getOfferSumValueWithValues(myEnemyOffer, pev);
+			if (enemyOfferValue > myEnemyOfferValue){
+				res.push(pev)
+			}
+			else{
+				this.log(`exluced: ${pev}`)
+			}
+		}
+		return res
+	}
 };
 
 function getOfferSumValue(o, values){
