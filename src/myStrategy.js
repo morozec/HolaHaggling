@@ -211,6 +211,16 @@ module.exports = class Agent {
 				}
 			}
 		}
+		else if (this.possibleEnemyValues != null){
+			var enemyCurrOffer = this.getEnemyOffer(currOffer);		//текущее предложение (если смотреть со стороны соперника)
+
+			for (var i in this.possibleEnemyValues){
+				var pev = this.possibleEnemyValues[i]; 	
+				
+				var enemyValue = this.getOfferSumValueWithValues(enemyCurrOffer, pev)
+				this.log(`${pev} sugg now: ${enemyValue}`);
+			}		
+		}
 
 		this.rounds--;
 		this.prevOfferIndex = currOfferIndex;			
