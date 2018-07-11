@@ -160,15 +160,17 @@ module.exports = class Agent {
 			var myPrevSumValue = this.getOfferSumValue(prevOffer)
 			var minEnemyValue = Number.MAX_SAFE_INTEGER;
 			var minPrevEnemyValue = Number.MAX_SAFE_INTEGER;
+			var maxPrevenemyValue = 0;
 			var enemyCurrOffer = this.getEnemyOffer(currOffer);
 			var enemyPrevOffer = this.getEnemyOffer(prevOffer)
 
 			for (var i in this.possibleEnemyValues){
 				var pev = this.possibleEnemyValues[i]; 	
 				var enemyValue = this.getOfferSumValueWithValues(enemyCurrOffer, pev)
-				if (enemyValue < minEnemyValue) minEnemyValue = enemyValue;
-				var prevEnemyValue = this.getOfferSumValueWithValues(enemyPrevOffer, pev)
+				if (enemyValue < minEnemyValue) minEnemyValue = enemyValue;				
+				var prevEnemyValue = this.getOfferSumValueWithValues(enemyPrevOffer, pev)				
 				if (prevEnemyValue < minPrevEnemyValue) minPrevEnemyValue = prevEnemyValue;
+				if (prevEnemyValue > maxPrevenemyValue) maxPrevenemyValue = prevEnemyValue;
 
 				this.log(`${pev} sugg now: ${enemyValue} sugg prev: ${prevEnemyValue} wants now: ${this.getOfferSumValueWithValues(enemyOffer, pev)}`);
 			}
@@ -177,10 +179,19 @@ module.exports = class Agent {
 
 			if (myPrevSumValue + minPrevEnemyValue >= mySumValue + minEnemyValue){
 				if (mySumValue <= minPrevEnemyValue){
-					this.rounds--;
-					this.prevOfferIndex = currOfferIndex;	
-					this.log('previous offer')
+					this.rounds--;					
+					this.log('previous offer (min)')
 					return prevOffer;
+				}
+			}
+
+			if (this.rounds > 1){
+				if (myPrevSumValue + maxPrevenemyValue > mySumValue + minEnemyValue){
+					if (mySumValue < myPrevSumValue){
+						this.rounds--;						
+						this.log('previous offer (max)')
+						return prevOffer;
+					}
 				}
 			}
 		}
