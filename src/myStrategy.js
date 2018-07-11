@@ -158,23 +158,37 @@ module.exports = class Agent {
 			var prevOffer = this.possibleOffers[this.prevOfferIndex]
 			var myPrevSumValue = this.getOfferSumValue(prevOffer)
 			var minEnemyValue = Number.MAX_SAFE_INTEGER;
+			var maxEnemyValue = 0;
 			var minPrevEnemyValue = Number.MAX_SAFE_INTEGER;
 			var maxPrevenemyValue = 0;
 			var enemyCurrOffer = this.getEnemyOffer(currOffer);
 			var enemyPrevOffer = this.getEnemyOffer(prevOffer)
 
+			var maxEnemyValueWantsNow = 0;
+
 			for (var i in this.possibleEnemyValues){
 				var pev = this.possibleEnemyValues[i]; 	
 				var enemyValue = this.getOfferSumValueWithValues(enemyCurrOffer, pev)
-				if (enemyValue < minEnemyValue) minEnemyValue = enemyValue;				
+				if (enemyValue < minEnemyValue) minEnemyValue = enemyValue;		
+				if (enemyValue < maxEnemyValue) maxEnemyValue = enemyValue;		
 				var prevEnemyValue = this.getOfferSumValueWithValues(enemyPrevOffer, pev)				
 				if (prevEnemyValue < minPrevEnemyValue) minPrevEnemyValue = prevEnemyValue;
 				if (prevEnemyValue > maxPrevenemyValue) maxPrevenemyValue = prevEnemyValue;
 
-				this.log(`${pev} sugg now: ${enemyValue} sugg prev: ${prevEnemyValue} wants now: ${this.getOfferSumValueWithValues(enemyOffer, pev)}`);
+				var enemyValueWantsNow = this.getOfferSumValueWithValues(enemyOffer, pev);
+				if (enemyValueWantsNow > maxEnemyValueWantsNow) maxEnemyValueWantsNow = enemyValueWantsNow;
+
+				this.log(`${pev} sugg now: ${enemyValue} sugg prev: ${prevEnemyValue} wants now: ${enemyValueWantsNow}`);
 			}
 
 			//this.log(`myPrevSumValue:${myPrevSumValue} minPrevEnemyValue:${minPrevEnemyValue} mySumValue:${mySumValue} minEnemyValue:${minEnemyValue}`)
+
+			if (suggestedSumValue + maxEnemyValueWantsNow > mySumValue + maxEnemyValue){
+				if (suggestedSumValue >= maxEnemyValueWantsNow){
+					this.log(`fair deal`)
+					return;
+				}
+			}
 
 			if (myPrevSumValue + minPrevEnemyValue >= mySumValue + minEnemyValue){
 				if (mySumValue <= minPrevEnemyValue){
