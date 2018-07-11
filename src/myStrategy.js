@@ -279,12 +279,13 @@ module.exports = class Agent {
 
 	updatePossibleEnemyValues(enemyOffer){		
 		var reducedIndexes = [];
-
+		/*
 		var isRedused = {};
 		for (var i = 0; i < enemyOffer.length; ++i){
 			var delta = enemyOffer[i] - this.previousEnemyOffer[i];
 			isRedused[i] = delta < 0;			
 		}
+		*/
 
 		var res = [];
 		
@@ -293,14 +294,17 @@ module.exports = class Agent {
 
 			var maxReduced = 0;
 			var minNotReduced = Number.MAX_SAFE_INTEGER;
-			for (var j = 0; j < pev.length; ++j){
-				if (isRedused[j]){
+			for (var j = 0; j < pev.length; ++j){			
+				
+				var delta = enemyOffer[j] - this.previousEnemyOffer[j];
+
+				if (delta < 0){
 					if (pev[j] > maxReduced){
 						maxReduced = pev[j];
 					}					
 				}
-				else{
-					if (pev[j] != 0 && pev[j] < minNotReduced){
+				else if (delta == 0 && pev[j] != 0){
+					if (pev[j] < minNotReduced){
 						minNotReduced = pev[j];
 					}
 				}
