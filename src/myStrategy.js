@@ -151,8 +151,7 @@ module.exports = class Agent {
 
 		var mySumValue = this.getOfferSumValue(currOffer);		
 		
-		
-		this.log(`my sum value: ${mySumValue}`);				
+		this.log(`curr offer: ${currOffer} (${mySumValue})`)				
 		
 		
 		if (this.prevOfferIndex >= 0){
@@ -199,8 +198,7 @@ module.exports = class Agent {
 		this.rounds--;
 		this.prevOfferIndex = currOfferIndex;			
 
-		if (suggestedSumValue && mySumValue <= suggestedSumValue){
-			this.log(`curr offer: ${currOffer}`)
+		if (suggestedSumValue && mySumValue <= suggestedSumValue){			
 			return;
 		}
 
