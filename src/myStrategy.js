@@ -156,15 +156,15 @@ module.exports = class Agent {
 		
 		if (this.prevOfferIndex >= 0){
 			var prevOffer = this.possibleOffers[this.prevOfferIndex]
-			var myPrevSumValue = this.getOfferSumValue(prevOffer)
-			var minEnemyValue = Number.MAX_SAFE_INTEGER;
-			var maxEnemyValue = 0;
-			var minPrevEnemyValue = Number.MAX_SAFE_INTEGER;
-			var maxPrevenemyValue = 0;
-			var enemyCurrOffer = this.getEnemyOffer(currOffer);
-			var enemyPrevOffer = this.getEnemyOffer(prevOffer)
+			var myPrevSumValue = this.getOfferSumValue(prevOffer)	//моя выручка с прошлого (отличного от текущего) предложения
+			var minEnemyValue = Number.MAX_SAFE_INTEGER; 			//минимальная выручка соперника с текущего предложения
+			var maxEnemyValue = 0;									//максимальная выручка соперника с текущего предложения
+			var minPrevEnemyValue = Number.MAX_SAFE_INTEGER;		//минимальная выручка соперника с прошлого предложения
+			var maxPrevenemyValue = 0;								//максимальная выручка соперника с прошлого предложения
+			var enemyCurrOffer = this.getEnemyOffer(currOffer);		//текущее предложение (если смотреть со стороны соперника)
+			var enemyPrevOffer = this.getEnemyOffer(prevOffer)		//прошлое предложение (если смотреть со стороны соперника)
 
-			var maxEnemyValueWantsNow = 0;
+			var maxEnemyValueWantsNow = 0;							//максимальная выручка, которую может заработать соперник со СВОЕГО предложения
 
 			for (var i in this.possibleEnemyValues){
 				var pev = this.possibleEnemyValues[i]; 	
@@ -179,19 +179,20 @@ module.exports = class Agent {
 				if (enemyValueWantsNow > maxEnemyValueWantsNow) maxEnemyValueWantsNow = enemyValueWantsNow;
 
 				this.log(`${pev} sugg now: ${enemyValue} sugg prev: ${prevEnemyValue} wants now: ${enemyValueWantsNow}`);
-			}
-
-			//this.log(`myPrevSumValue:${myPrevSumValue} minPrevEnemyValue:${minPrevEnemyValue} mySumValue:${mySumValue} minEnemyValue:${minEnemyValue}`)
-
-			if (suggestedSumValue + maxEnemyValueWantsNow > mySumValue + maxEnemyValue){
-				if (suggestedSumValue >= maxEnemyValueWantsNow){
+			}			
+			
+			//Мое текущее предложение уменьшает максимальную суммарную выручку игроков (по сравнению с текущим предложением соперника)
+			if (suggestedSumValue + maxEnemyValueWantsNow > mySumValue + maxEnemyValue){				
+				if (suggestedSumValue >= maxEnemyValueWantsNow){//я заработаю не меньше соперника
 					this.log(`fair deal`)
 					return;
 				}
 			}
 
+			//минимальная суммарная выручка с прошлого предложения была >= минимальной суммарной выручке с этого
 			if (myPrevSumValue + minPrevEnemyValue >= mySumValue + minEnemyValue){
-				if (mySumValue <= minPrevEnemyValue){
+				if (mySumValue <= minPrevEnemyValue){//моя выручка не больше, чем минимальная выручка соперника с прошлого предложения
+					//т.о. максимизируем суммарную выручку и зарабатываем не меньше соперника
 					this.rounds--;					
 					this.log('previous offer (min)')
 					return prevOffer;
@@ -199,8 +200,10 @@ module.exports = class Agent {
 			}
 
 			if (this.rounds > 1){
+				//максимальная суммарная выручка с прошлого предложения больше, чем минимальная на этом
+				//TODO: спорно. невыгодно для соперника
 				if (myPrevSumValue + maxPrevenemyValue > mySumValue + minEnemyValue){
-					if (mySumValue < myPrevSumValue){
+					if (mySumValue < myPrevSumValue){//моя выручка с прошлого предложения была выше, чем с этого
 						this.rounds--;						
 						this.log('previous offer (max)')
 						return prevOffer;
