@@ -91,6 +91,8 @@ module.exports = class Agent {
 	
     offer(o){
 		const MIN_AVERAGE_ENEMY_VALUE = 3
+		const MIN_MY_SUM_VALUE_TO_REDUCE_OFFER = this.getMaxSumValue()/2 + 1
+
 		this.log(`${this.rounds} rounds left`);
 		
 		var prevOfferIndex = this.getPreviosOfferIndex()		
@@ -229,14 +231,18 @@ module.exports = class Agent {
 						currOfferIndex = prevOfferIndex > 0 ? prevOfferIndex : 0;
 						break
 					}
+				}				
+				
+				if (this.isFirstPlayer || mySumValue < MIN_MY_SUM_VALUE_TO_REDUCE_OFFER){//если я первый игрок или моя выручка достаточно снижена, играем агрессивно
+					var averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer)
+					var averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer)
+					if (myPrevSumValue + averageEnemyPrevValue > mySumValue + averageEnemyValue){
+						this.log('previous offer (max sum value)')
+						currOfferIndex = prevOfferIndex > 0 ? prevOfferIndex : 0;
+						break
+					}
 				}
-				var averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer)
-				var averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer)
-				if (myPrevSumValue + averageEnemyPrevValue > mySumValue + averageEnemyValue){
-					this.log('previous offer (max sum value)')
-					currOfferIndex = prevOfferIndex > 0 ? prevOfferIndex : 0;
-					break
-				}
+				
 
 				/*
 				//максимальная суммарная выручка с прошлого предложения больше, чем минимальная на этом
