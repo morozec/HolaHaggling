@@ -24,14 +24,14 @@ module.exports = class Agent {
 		//for (var i in this.possibleOffers)
 		//	this.log(this.possibleOffers[i]);		
 
-		this.prevOfferValue = this.getMaxSumValue();
+		this.prevOfferValue = null;
 		this.possibleEnemyValues = null;
 		this.previousEnemyOffer = null;		
 	}
 
 	getPreviosOfferIndex(){
 
-		if (this.prevOfferValue == this.getMaxSumValue()) return -1;//no offers yet
+		if (this.prevOfferValue == null) return -1;//no offers yet
 		
 		for (var i = 1; i < this.possibleOffers.length; ++i){
 			var po = this.possibleOffers[i]
@@ -156,6 +156,7 @@ module.exports = class Agent {
 		
 		var currOfferIndex = prevOfferIndex;		
 		this.log('')		
+		this.log(prevOfferIndex)
 		while (currOfferIndex < this.possibleOffers.length - 1){
 			currOfferIndex++;	
 			
