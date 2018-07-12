@@ -174,7 +174,7 @@ module.exports = class Agent {
 			//if current offer if zero value for me or too cheap, suggest preveous one		
 			var isBadOffer = this.isZeroOffer(currOffer) || this.isPoorOffer(currOffer);			
 			if (isBadOffer){
-				currOfferIndex--;
+				currOfferIndex = prevOfferIndex;
 				this.log('is bad offer')
 				break				
 			}				
@@ -226,7 +226,7 @@ module.exports = class Agent {
 					if (mySumValue <= minPrevEnemyValue){//моя выручка c этого предложения не больше, чем минимальная выручка соперника с прошлого предложения
 						//т.о. максимизируем суммарную выручку и зарабатываем не меньше соперника						
 						this.log('previous offer (min)')
-						currOfferIndex--;
+						currOfferIndex = prevOfferIndex;
 						break
 					}
 				}
@@ -234,7 +234,7 @@ module.exports = class Agent {
 				var averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer)
 				if (myPrevSumValue + averageEnemyPrevValue > mySumValue + averageEnemyValue){
 					this.log('previous offer (max sum value)')
-					currOfferIndex--;
+					currOfferIndex = prevOfferIndex;
 					break
 				}
 
