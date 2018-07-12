@@ -160,7 +160,7 @@ module.exports = class Agent {
 			var mySumValue = this.getOfferSumValue(currOffer);			
 			this.log(`curr offer: ${currOffer} (${mySumValue})`)	
 			
-				
+			
 			if (currOfferIndex < this.possibleOffers.length - 1 && 
 				mySumValue == this.getOfferSumValue(this.possibleOffers[currOfferIndex + 1])) {				
 				this.log(`the same my sum value ${mySumValue}`)
@@ -178,8 +178,9 @@ module.exports = class Agent {
 			currOffer = this.possibleOffers[currOfferIndex]				
 			
 			var enemyCurrOffer = this.getEnemyOffer(currOffer);		//текущее предложение (если смотреть со стороны соперника)			
-			if (this.prevOfferIndex >= 0){			
-
+			
+			if (this.prevOfferIndex >= 0){		
+				
 				var prevOffer = this.possibleOffers[this.prevOfferIndex]
 				var myPrevSumValue = this.getOfferSumValue(prevOffer)	//моя выручка с прошлого (отличного от текущего) предложения
 				var minEnemyValue = Number.MAX_SAFE_INTEGER; 			//минимальная выручка соперника с текущего предложения
@@ -252,13 +253,14 @@ module.exports = class Agent {
 					this.log(`${pev} sugg now: ${enemyValue}`);
 				}		
 			}
-			*/
-			
-			var averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer); //средняя выручка соперника с моего текущего предложения		
-			//мое текущее предложение достаточно выгодно для соперника
-			//нет смысла дальше его уменьшать	
-			if (averageEnemyValue >= MIN_AVERAGE_ENEMY_VALUE) break;	
-			else this.log(`to bad for my enemy ${averageEnemyValue}`)		
+			*/				
+			if (this.possibleEnemyValues != null){//null на 1 шаге 1 игрока
+				var averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer); //средняя выручка соперника с моего текущего предложения			
+				//мое текущее предложение достаточно выгодно для соперника
+				//нет смысла дальше его уменьшать	
+				if (averageEnemyValue >= MIN_AVERAGE_ENEMY_VALUE) break;	
+				else this.log(`to bad for my enemy ${averageEnemyValue}`)	
+			}	
 		}
 		
 
