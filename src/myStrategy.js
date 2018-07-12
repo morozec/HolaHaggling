@@ -226,6 +226,13 @@ module.exports = class Agent {
 						break
 					}
 				}
+				var averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer)
+				var averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer)
+				if (myPrevSumValue + averageEnemyPrevValue > mySumValue + averageEnemyValue){
+					this.log('previous offer (max sum value)')
+					currOfferIndex--;
+					break
+				}
 
 				/*
 				//максимальная суммарная выручка с прошлого предложения больше, чем минимальная на этом
@@ -261,6 +268,9 @@ module.exports = class Agent {
 				if (averageEnemyValue >= MIN_AVERAGE_ENEMY_VALUE) break;	
 				else this.log(`to bad for my enemy ${averageEnemyValue}`)	
 			}	
+			else{
+				break
+			}
 		}
 		
 
