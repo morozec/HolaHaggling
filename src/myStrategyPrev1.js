@@ -19,9 +19,7 @@ module.exports = class Agent {
 		this.possibleOffers = this.getPossibleOffersRec(0);	
 		this.possibleOffers = this.getNotZeroValuesOffers();
 		this.possibleOffers = this.getNotMaxCountOffers();
-		this.possibleOffers.sort(comparator(this.values));
-		//for (var i in this.possibleOffers)
-		//	this.log(this.possibleOffers[i]);		
+		this.possibleOffers.sort(comparator(this.values));		
 
 		this.prevOfferIndex = -1;
 		this.possibleEnemyValues = null;
@@ -79,8 +77,7 @@ module.exports = class Agent {
 		return res;
 	}
 	
-    offer(o){
-		this.log(`${this.rounds} rounds left`);	
+    offer(o){		
 				
         if (o)
         {
@@ -97,7 +94,6 @@ module.exports = class Agent {
 			this.previousEnemyOffer = enemyOffer;			
 
 			var suggestedSumValue = this.getOfferSumValue(o);			
-			this.log(`suggested sum value: ${suggestedSumValue}`);
 
 			if (this.prevOfferIndex >= 0 && suggestedSumValue >= this.getOfferSumValue(this.possibleOffers[this.prevOfferIndex]))
 				return;
@@ -111,13 +107,11 @@ module.exports = class Agent {
 						this.enemyZeroIndexes.push(i);
 					}
 				}
-				this.possibleOffers = this.getEnemyZeroIndexesOffers();
-				//for (var i in this.possibleOffers)
-				//	this.log(this.possibleOffers[i]);
+				this.possibleOffers = this.getEnemyZeroIndexesOffers();				
 			}
 			
 
-			if (!this.isFirstPlayer && this.rounds == 1) //I am second and this is the last round
+			if (!this.isFirstPlayer && this.rounds == 1) 
 			{
 				let sum = 0;
 				for (let i = 0; i<o.length; i++)
@@ -149,9 +143,8 @@ module.exports = class Agent {
 		}
 		
 
-		var mySumValue = this.getOfferSumValue(currOffer);		
+		var mySumValue = this.getOfferSumValue(currOffer);	
 		
-		this.log(`curr offer: ${currOffer} (${mySumValue})`)				
 		
 		
 		if (this.prevOfferIndex >= 0){
@@ -178,7 +171,7 @@ module.exports = class Agent {
 				var enemyValueWantsNow = this.getOfferSumValueWithValues(enemyOffer, pev);
 				if (enemyValueWantsNow > maxEnemyValueWantsNow) maxEnemyValueWantsNow = enemyValueWantsNow;
 
-				this.log(`${pev} sugg now: ${enemyValue} sugg prev: ${prevEnemyValue} wants now: ${enemyValueWantsNow}`);
+				
 			}			
 			
 			//Мое текущее предложение уменьшает максимальную суммарную выручку игроков (по сравнению с текущим предложением соперника)
@@ -193,25 +186,23 @@ module.exports = class Agent {
 			if (myPrevSumValue + minPrevEnemyValue >= mySumValue + minEnemyValue){
 				if (mySumValue <= minPrevEnemyValue){//моя выручка не больше, чем минимальная выручка соперника с прошлого предложения
 					//т.о. максимизируем суммарную выручку и зарабатываем не меньше соперника
-					this.rounds--;					
-					this.log('previous offer (min)')
+					this.rounds--;				
+					
 					return prevOffer;
 				}
 			}
 
-			
-			//максимальная суммарная выручка с прошлого предложения больше, чем минимальная на этом
-			//TODO: спорно. невыгодно для соперника
-			if (myPrevSumValue + maxPrevenemyValue > mySumValue + minEnemyValue){
-				if (minPrevEnemyValue > 0){//противник гарантированно получит что-то с прошлого предложения
+			if (this.rounds > 1){
+				//максимальная суммарная выручка с прошлого предложения больше, чем минимальная на этом
+				//TODO: спорно. невыгодно для соперника
+				if (myPrevSumValue + maxPrevenemyValue > mySumValue + minEnemyValue){
 					if (mySumValue < myPrevSumValue){//моя выручка с прошлого предложения была выше, чем с этого
-						this.rounds--;						
-						this.log('previous offer (max)')
+						this.rounds--;					
+						
 						return prevOffer;
 					}
 				}
 			}
-			
 		}
 		else if (this.possibleEnemyValues != null){
 			var enemyCurrOffer = this.getEnemyOffer(currOffer);		//текущее предложение (если смотреть со стороны соперника)
@@ -219,8 +210,7 @@ module.exports = class Agent {
 			for (var i in this.possibleEnemyValues){
 				var pev = this.possibleEnemyValues[i]; 	
 				
-				var enemyValue = this.getOfferSumValueWithValues(enemyCurrOffer, pev)
-				this.log(`${pev} sugg now: ${enemyValue}`);
+				var enemyValue = this.getOfferSumValueWithValues(enemyCurrOffer, pev)				
 			}		
 		}
 
@@ -389,10 +379,7 @@ module.exports = class Agent {
 			var myEnemyOfferValue = this.getOfferSumValueWithValues(myEnemyOffer, pev);
 			if (enemyOfferValue > myEnemyOfferValue){
 				res.push(pev)
-			}
-			else{
-				this.log(`exluced: ${pev}`)
-			}
+			}			
 		}
 		return res
 	}
