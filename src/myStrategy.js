@@ -26,7 +26,8 @@ module.exports = class Agent {
 
 		this.prevOfferValue = null;
 		this.possibleEnemyValues = null;
-		this.previousEnemyOffer = null;		
+		this.previousEnemyOffer = null;	
+		
 	}
 
 	getPreviosOfferIndex(){
@@ -88,6 +89,13 @@ module.exports = class Agent {
 		}
 		return res;
 	}
+
+	isSameEnemyOffer(enemyOffer){
+		if (this.previousEnemyOffer == null) return false;
+		for (var i = 0; i < enemyOffer.length; ++i)
+			if (enemyOffer[i] != this.previousEnemyOffer[i]) return false;
+		return true;
+	}
 	
     offer(o){
 		const MIN_AVERAGE_ENEMY_VALUE = 3
@@ -95,7 +103,8 @@ module.exports = class Agent {
 
 		this.log(`${this.rounds} rounds left`);
 		
-		var prevOfferIndex = this.getPreviosOfferIndex()		
+		var prevOfferIndex = this.getPreviosOfferIndex()
+		var isSameEnemyOffer = false		
         if (o)
         {
 			var enemyOffer = this.getEnemyOffer(o);
@@ -108,7 +117,7 @@ module.exports = class Agent {
 			if (prevOfferIndex >= 0)
 				this.possibleEnemyValues = this.updatePossibleEnemyValuesByMyOffer(enemyOffer, this.possibleOffers[prevOfferIndex])
 			
-
+			isSameEnemyOffer = this.isSameEnemyOffer(enemyOffer)
 			this.previousEnemyOffer = enemyOffer;			
 
 			var suggestedSumValue = this.getOfferSumValue(o);			
@@ -174,12 +183,22 @@ module.exports = class Agent {
 			}
 			
 			//if current offer if zero value for me or too cheap, suggest preveous one		
-			var isBadOffer = this.isZeroOffer(currOffer) || this.isPoorOffer(currOffer);			
+			var isBadOffer = this.isZeroOffer(currOffer) || this.isTooPoorOffer(currOffer);			
 			if (isBadOffer){
 				currOfferIndex = prevOfferIndex > 0 ? prevOfferIndex : 0;
-				this.log('is bad offer')
+				this.log('is too poor offer')
 				break				
-			}				
+			}
+			
+			var isPoorOffer = this.isPoorOffer(currOffer)
+			if (isPoorOffer){
+				var needMakePoorOffer = !this.isFirstPlayer && isSameEnemyOffer;
+				if (!needMakePoorOffer){
+					currOfferIndex = prevOfferIndex > 0 ? prevOfferIndex : 0;
+					this.log('is poor offer')
+					break
+				}
+			}			
 
 			currOffer = this.possibleOffers[currOfferIndex]				
 			
@@ -285,15 +304,23 @@ module.exports = class Agent {
 		
 		
 		var currOffer = this.possibleOffers[currOfferIndex];
-		var mySumValue = this.getOfferSumValue(currOffer);
-		
+		var mySumValue = this.getOfferSumValue(currOffer);		
+
+		if (suggestedSumValue && mySumValue <= suggestedSumValue){		
+			if (this.isFirstPlayer && this.rounds == 1 || !this.isFirstPlayer && this.rounds <= 2){			
+				this.log("my next offer is not better for me")
+				return;
+			}
+			else{
+				currOfferIndex = prevOfferIndex > 0 ? prevOfferIndex : 0
+				currOffer = this.possibleOffers[currOfferIndex];
+				mySumValue = this.getOfferSumValue(currOffer);	
+				this.log("Oh, good offer! But we have a lot of time. What about my previous offer?")
+			}
+		}
+
 		this.prevOfferValue = mySumValue;	
 		this.rounds--;		
-
-		if (suggestedSumValue && mySumValue <= suggestedSumValue){			
-			this.log("my next offer is not better for me")
-			return;
-		}
 
         return currOffer;
 	}
@@ -321,6 +348,11 @@ module.exports = class Agent {
 	isPoorOffer(o){
 		var sumValue = this.getOfferSumValue(o);
 		return sumValue < this.getMaxSumValue() / 2;
+	}
+
+	isTooPoorOffer(o){
+		var sumValue = this.getOfferSumValue(o);
+		return sumValue < this.getMaxSumValue() / 4;
 	}
 
 	getMaxSumValue(){
