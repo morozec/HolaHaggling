@@ -157,8 +157,8 @@ module.exports = class Agent {
 			for (i in this.possibleOffers)
 				this.log(this.possibleOffers[i]);
 
-
 			if (suggestedSumValue >= MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER){
+
                 this.log("MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER");
                 return;
 			}
@@ -168,10 +168,12 @@ module.exports = class Agent {
 				let sum = 0;
 				for (let i = 0; i<o.length; i++)
 					sum += this.values[i]*o[i];
-				if (sum>0)
-					this.log("I should accept your offer in last round");
-					return;
+				if (sum>0) {
+                    this.log("I should accept your offer in last round");
+                    return;
+                }
 			}
+
         }
 		else
 		{			
