@@ -243,8 +243,15 @@ module.exports = class Agent {
 				//Мое текущее предложение уменьшает максимальную суммарную выручку игроков (по сравнению с текущим предложением соперника)
 				if (suggestedSumValue + maxEnemyValueWantsNow > mySumValue + maxEnemyValue){				
 					if (suggestedSumValue >= maxEnemyValueWantsNow){//я заработаю не меньше соперника
-						this.log(`fair deal`);
-						return;
+						if (this.isFirstPlayer && this.rounds === 1 || !this.isFirstPlayer && this.rounds <= 2) {
+                            this.log(`fair deal`);
+                            return;
+                        }
+                        else{
+                            this.log(`fair deal. But we have a lot of time. What about my previous offer?`);
+                            currOfferIndex = prevOfferIndex > 0 ? prevOfferIndex : 0;
+                            break
+						}
 					}
 				}
 
@@ -312,7 +319,7 @@ module.exports = class Agent {
         currOffer = this.possibleOffers[currOfferIndex];
         mySumValue = this.getOfferSumValue(currOffer);
 
-        if (suggestedSumValue && mySumValue <= suggestedSumValue){
+        if (suggestedSumValue > 0 && mySumValue <= suggestedSumValue){
 			if (this.isFirstPlayer && this.rounds === 1 || !this.isFirstPlayer && this.rounds <= 2 || currOfferIndex <= 0){
 				this.log("my next offer is not better for me");
 				return;
