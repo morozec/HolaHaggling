@@ -107,6 +107,7 @@ module.exports = class Agent {
 
         const MIN_AVERAGE_ENEMY_VALUE = 3;
 		const MIN_MY_SUM_VALUE_TO_REDUCE_OFFER = this.getMaxSumValue()/2 + 1;
+		const MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER = this.getMaxSumValue() * 0.8;
 
 		this.log(`${this.rounds} rounds left`);
 
@@ -152,7 +153,11 @@ module.exports = class Agent {
 
 			for (i in this.possibleOffers)
 				this.log(this.possibleOffers[i]);
-			
+
+			if (suggestedSumValue >= MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER){
+                this.log("MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER");
+                return;
+			}
 
 			if (!this.isFirstPlayer && this.rounds === 1) //I am second and this is the last round
 			{
@@ -160,6 +165,7 @@ module.exports = class Agent {
 				for (let i = 0; i<o.length; i++)
 					sum += this.values[i]*o[i];
 				if (sum>0)
+					this.log("I should accept your offer in last round");
 					return;
 			}
         }
