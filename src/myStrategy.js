@@ -283,35 +283,7 @@ module.exports = class Agent {
 						break
 					}
 				}
-				
-
-				/*
-				//максимальная суммарная выручка с прошлого предложения больше, чем минимальная на этом
-				//TODO: спорно. невыгодно для соперника
-				if (myPrevSumValue + maxPrevenemyValue > mySumValue + minEnemyValue){
-					if (minPrevEnemyValue > 0){//противник гарантированно получит что-то с прошлого предложения
-						if (mySumValue < myPrevSumValue){//моя выручка с прошлого предложения была выше, чем с этого
-							this.rounds--;						
-							this.log('previous offer (max)')
-							return prevOffer;
-						}
-					}
-				}
-				*/
-
-				
-			}
-			/*
-			else if (this.possibleEnemyValues != null){//just log
-				var enemyCurrOffer = this.getEnemyOffer(currOffer);		//текущее предложение (если смотреть со стороны соперника)
-
-				for (var i in this.possibleEnemyValues){
-					var pev = this.possibleEnemyValues[i]; 				
-					var enemyValue = this.getOfferSumValueWithValues(enemyCurrOffer, pev)
-					this.log(`${pev} sugg now: ${enemyValue}`);
-				}		
-			}
-			*/				
+			}			
 			if (this.possibleEnemyValues != null){//null на 1 шаге 1 игрока
                 let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer); //средняя выручка соперника с моего текущего предложения
 				//мое текущее предложение достаточно выгодно для соперника
