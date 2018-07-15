@@ -307,11 +307,11 @@ module.exports = class Agent {
 		var mySumValue = this.getOfferSumValue(currOffer);		
 
 		if (suggestedSumValue && mySumValue <= suggestedSumValue){		
-			if (this.isFirstPlayer && this.rounds == 1 || !this.isFirstPlayer && this.rounds <= 2){			
+			if (this.isFirstPlayer && this.rounds == 1 || !this.isFirstPlayer && this.rounds <= 2 || currOfferIndex <= 0){
 				this.log("my next offer is not better for me")
 				return;
 			}
-			else{
+			else {
 				currOfferIndex = prevOfferIndex > 0 ? prevOfferIndex : 0
 				currOffer = this.possibleOffers[currOfferIndex];
 				mySumValue = this.getOfferSumValue(currOffer);	
