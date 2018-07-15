@@ -100,9 +100,11 @@ module.exports = class Agent {
     offer(o){
 		let mySumValue;
         let i;
-        let suggestedSumValue = this.getOfferSumValue(o);
-        let enemyOffer = this.getEnemyOffer(o);
         let currOffer;
+
+        let suggestedSumValue = 0;
+        let enemyOffer = null;
+
         const MIN_AVERAGE_ENEMY_VALUE = 3;
 		const MIN_MY_SUM_VALUE_TO_REDUCE_OFFER = this.getMaxSumValue()/2 + 1;
 
@@ -112,6 +114,7 @@ module.exports = class Agent {
         let isSameEnemyOffer = false;
         if (o)
         {
+            enemyOffer = this.getEnemyOffer(o);
             if (this.possibleEnemyValues == null){
 				this.possibleEnemyValues = this.getPossibleEnemyValues(enemyOffer);				
 			}
@@ -124,6 +127,7 @@ module.exports = class Agent {
 			isSameEnemyOffer = this.isSameEnemyOffer(enemyOffer);
 			this.previousEnemyOffer = enemyOffer;
 
+            suggestedSumValue = this.getOfferSumValue(o);
             this.log(`suggested sum value: ${suggestedSumValue}`);
 
 			if (prevOfferIndex >= 0 && suggestedSumValue >= this.getOfferSumValue(this.possibleOffers[prevOfferIndex]))
