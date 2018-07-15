@@ -1,6 +1,6 @@
 'use strict'; /*jslint node:true*/
 
-module.exports = class Agent {	
+module.exports = class Agent {
 
     constructor(me, counts, values, max_rounds, log){
 		this.counts = counts;
@@ -419,15 +419,19 @@ module.exports = class Agent {
 	}
 
 	getPossibleEnemyValues(enemyOffer){
-        let possibleEnemyValues = this.getPossibleEnemyValuesRec(enemyOffer, this.getMaxSumValue(), 0);
+    	let currSumValue = this.getMaxSumValue();
+        let possibleEnemyValues = this.getPossibleEnemyValuesRec(enemyOffer, currSumValue, 0, 0);
+        if (possibleEnemyValues.length === 0)
+        	possibleEnemyValues = this.getPossibleEnemyValuesRec(enemyOffer, currSumValue, 0, 1);
 		return possibleEnemyValues;
 	}
 
-	getPossibleEnemyValuesRec(offer, currSumValue, index){	
+	getPossibleEnemyValuesRec(offer, currSumValue, index, zeroOfferValue){
 		
 		if (index === offer.length - 1){
 			if (offer[index] === 0){
 				if (currSumValue === 0) return [0];
+				if (currSumValue === zeroOfferValue) return [zeroOfferValue];
 				else return null;
 			}
 			if (currSumValue === 0) return null;
@@ -437,18 +441,21 @@ module.exports = class Agent {
 
         let variants = [];
 		if (offer[index] === 0){
-			let nextVariants = this.getPossibleEnemyValuesRec(offer, currSumValue, index + 1);
-			for (let i in nextVariants){
-                let nextVariant = nextVariants[i];
-				if (nextVariant != null)
-					variants.push([0].concat(nextVariant))
-			}
+			for (let j = 0; j <= zeroOfferValue; ++j) {
+                if (currSumValue - j * this.counts[index] < 0) return null;
+                let nextVariants = this.getPossibleEnemyValuesRec(offer, currSumValue - j * this.counts[index], index + 1, zeroOfferValue);
+                for (let i in nextVariants) {
+                    let nextVariant = nextVariants[i];
+                    if (nextVariant != null)
+                        variants.push([j].concat(nextVariant))
+                }
+            }
 		}
 		else{
 
             let i = 1;
 			while (currSumValue - i * this.counts[index] >= 0){
-                let nextVariants = this.getPossibleEnemyValuesRec(offer, currSumValue - i * this.counts[index], index + 1);
+                let nextVariants = this.getPossibleEnemyValuesRec(offer, currSumValue - i * this.counts[index], index + 1, zeroOfferValue);
 				for (let j in nextVariants){
                     let nextVariant = nextVariants[j];
 					if (nextVariant != null){
@@ -550,6 +557,8 @@ function getEnemyOffer(offer, counts){
 	}	
 	return enemyOffer;
 }
+
+
 
 
 
