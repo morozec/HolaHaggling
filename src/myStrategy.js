@@ -131,8 +131,10 @@ module.exports = class Agent {
             suggestedSumValue = this.getOfferSumValue(o);
             this.log(`suggested sum value: ${suggestedSumValue}`);
 
-			if (prevOfferIndex >= 0 && suggestedSumValue >= this.getOfferSumValue(this.possibleOffers[prevOfferIndex]))
-				return;
+			if (prevOfferIndex >= 0 && suggestedSumValue >= this.getOfferSumValue(this.possibleOffers[prevOfferIndex])) {
+				this.log('current enemy offer is not worse that my previous');
+                return;
+            }
 			
 			if (this.rounds === this.max_rounds ||
 				this.isFirstPlayer && this.rounds === this.max_rounds - 1)
@@ -153,6 +155,7 @@ module.exports = class Agent {
 
 			for (i in this.possibleOffers)
 				this.log(this.possibleOffers[i]);
+
 
 			if (suggestedSumValue >= MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER){
                 this.log("MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER");
