@@ -471,7 +471,7 @@ module.exports = class Agent {
         let variants = [];
 		if (offer[index] === 0){
 			for (let j = 0; j <= zeroOfferValue; ++j) {
-                if (currSumValue - j * this.counts[index] < 0) return null;
+                if (currSumValue - j * this.counts[index] < 0) continue;
                 let nextVariants = this.getPossibleEnemyValuesRec(offer, currSumValue - j * this.counts[index], index + 1, zeroOfferValue);
                 for (let i in nextVariants) {
                     let nextVariant = nextVariants[i];
