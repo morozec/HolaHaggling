@@ -247,7 +247,11 @@ module.exports = class Agent {
 
         let currOfferIndex = prevOfferIndex;
         if (this.log !== null) this.log('');
-		if (this.log !== null) this.log(`prev offer indexes: ${this.prevOfferIndexes}`);
+		//if (this.log !== null) this.log(`prev offer indexes: ${this.prevOfferIndexes}`);
+		if (this.possibleEnemyValues != null)
+			for (let i = 0; i < this.possibleEnemyValues.length; ++i)
+				if (this.log !== null) this.log(this.possibleEnemyValues[i]);
+
 		let returnBackOfferIndex = this.getReturnBackOfferIndex();		
 
 		while (currOfferIndex < this.possibleOffers.length - 1){
@@ -559,7 +563,7 @@ module.exports = class Agent {
 						maxReduced = pev[j];
 					}					
 				}
-				else if (delta === 0 && pev[j] !== 0){
+				else if (delta === 0 && pev[j] !== 0 && enemyOffer[j] !== 0){
 					if (pev[j] < minNotReduced){
 						minNotReduced = pev[j];
 					}
