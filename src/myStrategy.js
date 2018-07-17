@@ -254,6 +254,7 @@ module.exports = class Agent {
 
 		let returnBackOfferIndex = this.getReturnBackOfferIndex();		
 
+		let poorEnemyOfferIndex = -1;
 		while (currOfferIndex < this.possibleOffers.length - 1){
 			currOfferIndex++;
 			if (this.prevOfferIndexes.indexOf(currOfferIndex) >= 0) continue;			
@@ -272,7 +273,7 @@ module.exports = class Agent {
 			//if current offer if zero value for me or too cheap, suggest preveous one		
             let isBadOffer = this.isZeroOffer(currOffer) || this.isTooPoorOffer(currOffer);
             if (isBadOffer){
-				currOfferIndex = returnBackOfferIndex;
+				currOfferIndex = poorEnemyOfferIndex >-1 ? poorEnemyOfferIndex : returnBackOfferIndex;
 				if (this.log !== null) this.log('is too poor offer');
 				break				
 			}
@@ -281,7 +282,7 @@ module.exports = class Agent {
             if (isPoorOffer){
                 let needMakePoorOffer = !this.isFirstPlayer && isSameEnemyOffer;
                 if (!needMakePoorOffer){
-					currOfferIndex = returnBackOfferIndex;
+					currOfferIndex = poorEnemyOfferIndex > -1 ? poorEnemyOfferIndex : returnBackOfferIndex;
 					if (this.log !== null) this.log('is poor offer');
 					break
 				}
@@ -373,7 +374,10 @@ module.exports = class Agent {
 					// else break;
 					break;
 				}
-				else if (this.log !== null) this.log(`too bad for my enemy ${averageEnemyValue}`)
+				else {
+					if (this.log != null) this.log(`too bad for my enemy ${averageEnemyValue}`);
+					poorEnemyOfferIndex = currOfferIndex;
+				}
 			}	
 			else{				
 				break
