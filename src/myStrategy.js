@@ -180,7 +180,7 @@ module.exports = class Agent {
             if (this.log !== null) this.log(`suggested sum value: ${suggestedSumValue}`);
 
 			if (prevOfferIndex >= 0 && suggestedSumValue >= this.getOfferSumValue(this.possibleOffers[prevOfferIndex])) {
-				if (this.log !== null) this.log('current enemy offer is not worse that my previous');
+				if (this.log !== null) this.log('current enemy offer is not worse that my previous');//TODO: можно не соглашатсья в раннем раунде
                 return;
             }
 			
@@ -389,7 +389,7 @@ module.exports = class Agent {
         mySumValue = this.getOfferSumValue(currOffer);
 
         if (suggestedSumValue > 0 && mySumValue <= suggestedSumValue){
-			if (this.isFirstPlayer && this.rounds === 1 || !this.isFirstPlayer && this.rounds <= 2 || currOfferIndex <= 0){
+			if (this.rounds === 1 || currOfferIndex <= 0){
 				if (this.log !== null) this.log("my next offer is not better for me");
 				return;
 			}
