@@ -157,7 +157,7 @@ module.exports = class Agent {
 		const MIN_MY_SUM_VALUE_TO_REDUCE_OFFER = maxSumValue*0.5 + 1;
 		const MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER = maxSumValue * 0.8;
 
-		this.log(`${this.rounds} rounds left`);
+		if (this.log !== null) this.log(`${this.rounds} rounds left`);
 
         let prevOfferIndex = this.getPreviosOfferIndex();
         let isSameEnemyOffer = false;
@@ -177,10 +177,10 @@ module.exports = class Agent {
 			this.previousEnemyOffer = enemyOffer;
 
             suggestedSumValue = this.getOfferSumValue(o);
-            this.log(`suggested sum value: ${suggestedSumValue}`);
+            if (this.log !== null) this.log(`suggested sum value: ${suggestedSumValue}`);
 
 			if (prevOfferIndex >= 0 && suggestedSumValue >= this.getOfferSumValue(this.possibleOffers[prevOfferIndex])) {
-				this.log('current enemy offer is not worse that my previous');
+				if (this.log !== null) this.log('current enemy offer is not worse that my previous');
                 return;
             }
 			
@@ -188,11 +188,21 @@ module.exports = class Agent {
 				this.isFirstPlayer && this.rounds === this.max_rounds - 1)
 			{
 				for (let i = 0; i<o.length; i++){
-					if (o[i] === this.counts[i]){
+					let isAlwaysEmemyZero = true;
+					for (let j = 0; j < this.possibleEnemyValues.length;++j){
+						let pev = this.possibleEnemyValues[j];
+						if (pev[i] > 0){
+							isAlwaysEmemyZero = false;
+							break;
+						}
+					}
+
+					if (isAlwaysEmemyZero){
 						//enemy don't need this item. Probably is has zero value for him
 						this.enemyZeroIndexes.push(i);
 					}
-				}
+				}				
+
 				let newPos = this.getEnemyZeroIndexesOffers();
 				let newPois =  this.updatePreviousOfferIndexes(newPos);				
 				this.prevOfferIndexes = newPois;
@@ -204,12 +214,13 @@ module.exports = class Agent {
 			this.possibleOffers.sort(comparator(this.values, this.possibleEnemyValues, this.counts));
 			prevOfferIndex = this.getPreviosOfferIndex();
 
-			for (i in this.possibleOffers)
-				this.log(this.possibleOffers[i]);
+			if (this.log !== null)
+				for (i in this.possibleOffers)
+					this.log(this.possibleOffers[i]);
 
 			if (suggestedSumValue >= MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER){
 
-                this.log("MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER");
+                if (this.log !== null) this.log("MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER");
                 return;
 			}
 
@@ -219,7 +230,7 @@ module.exports = class Agent {
 				for (let i = 0; i<o.length; i++)
 					sum += this.values[i]*o[i];
 				if (sum>0) {
-                    this.log("I should accept your offer in last round");
+                    if (this.log !== null) this.log("I should accept your offer in last round");
                     return;
                 }
 			}
@@ -228,29 +239,29 @@ module.exports = class Agent {
 		else
 		{			
 			this.isFirstPlayer = true;
-			for (i in this.possibleOffers)
-				this.log(this.possibleOffers[i]);
+			if (this.log !== null)
+				for (i in this.possibleOffers)
+					this.log(this.possibleOffers[i]);
 		}
 
 
         let currOfferIndex = prevOfferIndex;
-        this.log('');
-		this.log(this.prevOfferIndexes);
-		let returnBackOfferIndex = this.getReturnBackOfferIndex();
-		
+        if (this.log !== null) this.log('');
+		if (this.log !== null) this.log(`prev offer indexes: ${this.prevOfferIndexes}`);
+		let returnBackOfferIndex = this.getReturnBackOfferIndex();		
 
 		while (currOfferIndex < this.possibleOffers.length - 1){
 			currOfferIndex++;
-			if (this.prevOfferIndexes.indexOf(currOfferIndex) >= 0) continue;
+			if (this.prevOfferIndexes.indexOf(currOfferIndex) >= 0) continue;			
 
             currOffer = this.possibleOffers[currOfferIndex];
             mySumValue = this.getOfferSumValue(currOffer);
-			this.log(`curr offer: ${currOffer} (${mySumValue})`);
+			if (this.log !== null) this.log(`curr offer: ${currOffer} (${mySumValue})`);
 			
 			
 			if (currOfferIndex < this.possibleOffers.length - 1 && 
 				mySumValue === this.getOfferSumValue(this.possibleOffers[currOfferIndex + 1])) {
-				this.log(`the same my sum value ${mySumValue}`);
+				if (this.log !== null) this.log(`the same my sum value ${mySumValue}`);
 				continue
 			}
 
@@ -258,7 +269,7 @@ module.exports = class Agent {
             let isBadOffer = this.isZeroOffer(currOffer) || this.isTooPoorOffer(currOffer);
             if (isBadOffer){
 				currOfferIndex = returnBackOfferIndex;
-				this.log('is too poor offer');
+				if (this.log !== null) this.log('is too poor offer');
 				break				
 			}
 
@@ -267,7 +278,7 @@ module.exports = class Agent {
                 let needMakePoorOffer = !this.isFirstPlayer && isSameEnemyOffer;
                 if (!needMakePoorOffer){
 					currOfferIndex = returnBackOfferIndex;
-					this.log('is poor offer');
+					if (this.log !== null) this.log('is poor offer');
 					break
 				}
 			}			
@@ -304,18 +315,18 @@ module.exports = class Agent {
                     let enemyValueWantsNow = this.getOfferSumValueWithValues(enemyOffer, pev);
 					if (enemyValueWantsNow > maxEnemyValueWantsNow) maxEnemyValueWantsNow = enemyValueWantsNow;
 
-					this.log(`${pev} sugg now: ${enemyValue} sugg prev: ${prevEnemyValue} wants now: ${enemyValueWantsNow}`);
+					if (this.log !== null) this.log(`${pev} sugg now: ${enemyValue} sugg prev: ${prevEnemyValue} wants now: ${enemyValueWantsNow}`);
 				}			
 				
 				//Мое текущее предложение уменьшает максимальную суммарную выручку игроков (по сравнению с текущим предложением соперника)
 				if (suggestedSumValue + maxEnemyValueWantsNow > mySumValue + maxEnemyValue){				
 					if (suggestedSumValue >= maxEnemyValueWantsNow){//я заработаю не меньше соперника
 						if (this.isFirstPlayer && this.rounds === 1 || !this.isFirstPlayer && this.rounds <= 2) {
-                            this.log(`fair deal`);
+                            if (this.log !== null) this.log(`fair deal`);
                             return;
                         }
                         else{
-                            this.log(`fair deal. But we have a lot of time. What about my previous offer?`);
+                            if (this.log !== null) this.log(`fair deal. But we have a lot of time. What about my previous offer?`);
                             currOfferIndex = returnBackOfferIndex;
                             break
 						}
@@ -326,7 +337,7 @@ module.exports = class Agent {
 				if (myPrevSumValue + minPrevEnemyValue >= mySumValue + minEnemyValue){
 					if (mySumValue <= minPrevEnemyValue){//моя выручка c этого предложения не больше, чем минимальная выручка соперника с прошлого предложения
 						//т.о. максимизируем суммарную выручку и зарабатываем не меньше соперника						
-						this.log('previous offer (min)');
+						if (this.log !== null) this.log('previous offer (min)');
 						currOfferIndex = returnBackOfferIndex;
 						break
 					}
@@ -336,7 +347,7 @@ module.exports = class Agent {
 						let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer);
 						let averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer);
 						if (myPrevSumValue + averageEnemyPrevValue > mySumValue + averageEnemyValue){
-							this.log('previous offer (max sum value)');
+							if (this.log !== null) this.log('previous offer (max sum value)');
 							currOfferIndex = returnBackOfferIndex;
 							break
 						}
@@ -358,7 +369,7 @@ module.exports = class Agent {
 					// else break;
 					break;
 				}
-				else this.log(`too bad for my enemy ${averageEnemyValue}`)
+				else if (this.log !== null) this.log(`too bad for my enemy ${averageEnemyValue}`)
 			}	
 			else{				
 				break
@@ -371,14 +382,14 @@ module.exports = class Agent {
 
         if (suggestedSumValue > 0 && mySumValue <= suggestedSumValue){
 			if (this.isFirstPlayer && this.rounds === 1 || !this.isFirstPlayer && this.rounds <= 2 || currOfferIndex <= 0){
-				this.log("my next offer is not better for me");
+				if (this.log !== null) this.log("my next offer is not better for me");
 				return;
 			}
 			else {
 				currOfferIndex = returnBackOfferIndex;
 				currOffer = this.possibleOffers[currOfferIndex];
 				mySumValue = this.getOfferSumValue(currOffer);	
-				this.log("Oh, good offer! But we have a lot of time. What about my previous offer?")
+				if (this.log !== null) this.log("Oh, good offer! But we have a lot of time. What about my previous offer?")
 			}
 		}
 
@@ -386,7 +397,7 @@ module.exports = class Agent {
 		this.prevOfferIndexes.push(currOfferIndex);
 		this.rounds--;		
 
-		this.log(`My actual offer ${currOffer} (${mySumValue})`);
+		if (this.log !== null) this.log(`My actual offer ${currOffer} (${mySumValue})`);
         return currOffer;
 	}	
 
@@ -477,52 +488,56 @@ module.exports = class Agent {
 
 	getPossibleEnemyValues(enemyOffer){
     	let currSumValue = this.getMaxSumValue();
-        let possibleEnemyValues = this.getPossibleEnemyValuesRec(enemyOffer, currSumValue, 0, 0);
-        if (possibleEnemyValues.length === 0)
-        	possibleEnemyValues = this.getPossibleEnemyValuesRec(enemyOffer, currSumValue, 0, 1);
+		let possibleEnemyValues = this.getPossibleEnemyValuesRec(enemyOffer, currSumValue, 0);
+		possibleEnemyValues = this.excludeBigZeroOfferValues(enemyOffer, possibleEnemyValues);
+        // if (possibleEnemyValues.length === 0)
+        // 	possibleEnemyValues = this.getPossibleEnemyValuesRec(enemyOffer, currSumValue, 0, 1);
 		return possibleEnemyValues;
 	}
 
-	getPossibleEnemyValuesRec(offer, currSumValue, index, zeroOfferValue){
-		
-		if (index === offer.length - 1){
-			if (offer[index] === 0){
-				if (currSumValue === 0) return [0];
-				if (currSumValue === zeroOfferValue) return [zeroOfferValue];
-				else return null;
+	excludeBigZeroOfferValues(offer, possibleEnemyValues){
+		let res = [];
+		for (let i = 0; i < possibleEnemyValues.length; ++i){
+			let pev = possibleEnemyValues[i];
+			let maxZerovalue = 0;
+			let minNotZeroValue = Number.MAX_SAFE_INTEGER;
+			for (let j = 0; j < offer.length; ++j){
+				if (offer[j] === 0){
+					if (pev[j] > 0 && this.counts[j] > 1) maxZerovalue = Number.MAX_SAFE_INTEGER;//этой вещи много, она что-то стоит, а соперник не хочет ни одной
+					if (pev[j] > maxZerovalue) maxZerovalue = pev[j];
+				}
+				else{
+					if (pev[j] < minNotZeroValue) minNotZeroValue = pev[j];
+				}
 			}
-			if (currSumValue === 0) return null;
+			if (minNotZeroValue >= maxZerovalue){
+				res.push(pev);
+			}
+		}
+		return res;
+	}
+
+	getPossibleEnemyValuesRec(offer, currSumValue, index){
+		
+		if (index === offer.length - 1){			
+			if (currSumValue === 0) return [0];
 			if (currSumValue % this.counts[index] !== 0) return null;
 			return [currSumValue / this.counts[index]];
 		}
 
-        let variants = [];
-		if (offer[index] === 0){
-			for (let j = 0; j <= zeroOfferValue; ++j) {
-                if (currSumValue - j * this.counts[index] < 0) continue;
-                let nextVariants = this.getPossibleEnemyValuesRec(offer, currSumValue - j * this.counts[index], index + 1, zeroOfferValue);
-                for (let i in nextVariants) {
-                    let nextVariant = nextVariants[i];
-                    if (nextVariant != null)
-                        variants.push([j].concat(nextVariant))
-                }
-            }
-		}
-		else{
-
-            let i = 1;
-			while (currSumValue - i * this.counts[index] >= 0){
-                let nextVariants = this.getPossibleEnemyValuesRec(offer, currSumValue - i * this.counts[index], index + 1, zeroOfferValue);
-				for (let j in nextVariants){
-                    let nextVariant = nextVariants[j];
-					if (nextVariant != null){
-						
-						variants.push([i].concat(nextVariant))
-					}
+        let variants = [];		
+		let i = 0;
+		while (currSumValue - i * this.counts[index] >= 0){
+			let nextVariants = this.getPossibleEnemyValuesRec(offer, currSumValue - i * this.counts[index], index + 1);
+			for (let j in nextVariants){
+				let nextVariant = nextVariants[j];
+				if (nextVariant != null){						
+					variants.push([i].concat(nextVariant))
 				}
-				i++;
 			}
+			i++;
 		}
+		
 		
 		return variants;
 	}
@@ -569,7 +584,7 @@ module.exports = class Agent {
 				res.push(pev)
 			}
 			else{
-				this.log(`exluced: ${pev}`)
+				if (this.log !== null) this.log(`exluced: ${pev}`)
 			}
 		}
 		return res
