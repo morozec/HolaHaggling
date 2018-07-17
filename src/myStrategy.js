@@ -247,7 +247,7 @@ module.exports = class Agent {
 
         let currOfferIndex = prevOfferIndex;
         if (this.log !== null) this.log('');
-		//if (this.log !== null) this.log(`prev offer indexes: ${this.prevOfferIndexes}`);
+		if (this.log !== null) this.log(`prev offer indexes: ${this.prevOfferIndexes}`);
 		if (this.possibleEnemyValues != null)
 			for (let i = 0; i < this.possibleEnemyValues.length; ++i)
 				if (this.log !== null) this.log(this.possibleEnemyValues[i]);
@@ -563,7 +563,8 @@ module.exports = class Agent {
 						maxReduced = pev[j];
 					}					
 				}
-				else if (delta === 0 && pev[j] !== 0 && enemyOffer[j] !== 0){
+				//если для меня товар не имеет ценности, умный противник не будет мне его предлагать
+				else if (delta === 0 && pev[j] !== 0 && enemyOffer[j] !== 0 && this.values[j] != 0){
 					if (pev[j] < minNotReduced){
 						minNotReduced = pev[j];
 					}
