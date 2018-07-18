@@ -630,7 +630,7 @@ module.exports = class Agent {
 				res.push(pev)
 			}
 			else{
-				if (this.log !== null) this.log(`exluced: ${pev}`)
+				//if (this.log !== null) this.log(`exluced: ${pev}`)
 			}
 		}
 		return res
