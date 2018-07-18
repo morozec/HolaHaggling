@@ -135,11 +135,10 @@ module.exports = class Agent {
 		this.possibleOffers = this.getPossibleOffersRec(0);	
 		this.possibleOffers = this.getNotZeroValuesOffers();
 		this.possibleOffers = this.getNotMaxCountOffers();
-		this.possibleOffers.sort(comparator(this.values));
-		
+		this.possibleOffers.sort(comparator(this.values));		
 
-		let possibleEnemyValues = this.getPossibleEnemyValues(this.enemyOffers[0], false, true);			
-		this.possibleOffers = this.updatePossibleOffersByZeroEnemyValue(this.enemyOffers[0].length, possibleEnemyValues, this.possibleOffers);			
+		let possibleEnemyValues = this.getPossibleEnemyValues(this.enemyOffers[0], false, excludeBigZeroOfferValues);
+		this.possibleOffers = this.updatePossibleOffersByZeroEnemyValue(this.enemyOffers[0].length, possibleEnemyValues, this.possibleOffers);	
 		
 		
 		for (let i = 0, j = 1; i < this.myOffers.length, j < this.enemyOffers.length; ++i, ++j){					
@@ -220,7 +219,7 @@ module.exports = class Agent {
 			if (this.possibleEnemyValues.length == 0){
 				if (this.log != null) this.log("no possible enemy offers left. need update");
 				this.possibleEnemyValues = this.updateWrongDetectedZeroPossibleEnemyValues(true);	
-				if (this.possibleEnemyValues.length == 0){
+				if (this.possibleEnemyValues.length == 0){					
 					this.possibleEnemyValues = this.updateWrongDetectedZeroPossibleEnemyValues(false);	
 				}
 			}			  
@@ -284,7 +283,8 @@ module.exports = class Agent {
 			for (let i = 0; i < this.possibleEnemyValues.length; ++i)
 				if (this.log !== null) this.log(this.possibleEnemyValues[i]);
 
-		let returnBackOfferIndex = this.getReturnBackOfferIndex();			
+		let returnBackOfferIndex = this.getReturnBackOfferIndex();	
+		if (this.log != null) this.log(`returnBackOfferIndex ${returnBackOfferIndex}`);		
 
 		let poorEnemyOfferIndex = -1;
 		while (currOfferIndex < this.possibleOffers.length - 1){
