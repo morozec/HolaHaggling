@@ -83,11 +83,6 @@
     [
         "info",
         0,
-        "prev offer indexes: "
-    ],
-    [
-        "info",
-        0,
         "curr offer: 2,1,0 (10)"
     ],
     [
@@ -101,12 +96,12 @@
         [
             [
                 2,
-                1,
+                0,
                 0
             ],
             [
                 0,
-                0,
+                1,
                 1
             ]
         ]
@@ -224,11 +219,6 @@
         "info",
         1,
         ""
-    ],
-    [
-        "info",
-        1,
-        "prev offer indexes: "
     ],
     [
         "info",
@@ -394,12 +384,12 @@
         [
             [
                 2,
-                1,
+                0,
                 0
             ],
             [
                 0,
-                0,
+                1,
                 1
             ]
         ]
@@ -427,6 +417,15 @@
         "info",
         0,
         [
+            1,
+            1,
+            0
+        ]
+    ],
+    [
+        "info",
+        0,
+        [
             2,
             0,
             0
@@ -435,12 +434,34 @@
     [
         "info",
         0,
-        ""
+        [
+            0,
+            1,
+            0
+        ]
     ],
     [
         "info",
         0,
-        "prev offer indexes: 0"
+        [
+            1,
+            0,
+            0
+        ]
+    ],
+    [
+        "info",
+        0,
+        [
+            0,
+            0,
+            0
+        ]
+    ],
+    [
+        "info",
+        0,
+        ""
     ],
     [
         "info",
@@ -535,67 +556,62 @@
     [
         "info",
         0,
-        "curr offer: 2,0,0 (6)"
+        "curr offer: 1,1,0 (7)"
     ],
     [
         "info",
         0,
-        "0,1,9 sugg now: 10 sugg prev: 9 wants now: 10"
+        "0,1,9 sugg now: 9 sugg prev: 9 wants now: 10"
     ],
     [
         "info",
         0,
-        "0,2,8 sugg now: 10 sugg prev: 8 wants now: 10"
+        "0,2,8 sugg now: 8 sugg prev: 8 wants now: 10"
     ],
     [
         "info",
         0,
-        "0,3,7 sugg now: 10 sugg prev: 7 wants now: 10"
+        "0,3,7 sugg now: 7 sugg prev: 7 wants now: 10"
     ],
     [
         "info",
         0,
-        "0,4,6 sugg now: 10 sugg prev: 6 wants now: 10"
+        "0,4,6 sugg now: 6 sugg prev: 6 wants now: 10"
     ],
     [
         "info",
         0,
-        "0,5,5 sugg now: 10 sugg prev: 5 wants now: 10"
+        "0,5,5 sugg now: 5 sugg prev: 5 wants now: 10"
     ],
     [
         "info",
         0,
-        "0,6,4 sugg now: 10 sugg prev: 4 wants now: 10"
+        "0,6,4 sugg now: 4 sugg prev: 4 wants now: 10"
     ],
     [
         "info",
         0,
-        "0,7,3 sugg now: 10 sugg prev: 3 wants now: 10"
+        "0,7,3 sugg now: 3 sugg prev: 3 wants now: 10"
     ],
     [
         "info",
         0,
-        "0,8,2 sugg now: 10 sugg prev: 2 wants now: 10"
+        "0,8,2 sugg now: 2 sugg prev: 2 wants now: 10"
     ],
     [
         "info",
         0,
-        "0,9,1 sugg now: 10 sugg prev: 1 wants now: 10"
+        "0,9,1 sugg now: 1 sugg prev: 1 wants now: 10"
     ],
     [
         "info",
         0,
-        "0,10,0 sugg now: 10 sugg prev: 0 wants now: 10"
+        "0,10,0 sugg now: 0 sugg prev: 0 wants now: 10"
     ],
     [
         "info",
         0,
-        "Oh, good offer! But we have a lot of time. What about my previous offer?"
-    ],
-    [
-        "info",
-        0,
-        "My actual offer 2,1,0 (10)"
+        "My actual offer 1,1,0 (7)"
     ],
     [
         "offer",
@@ -603,12 +619,12 @@
         [
             [
                 2,
-                1,
+                0,
                 0
             ],
             [
                 0,
-                0,
+                1,
                 1
             ]
         ]
@@ -621,7 +637,7 @@
     [
         "info",
         1,
-        "suggested sum value: 2"
+        "suggested sum value: 4"
     ],
     [
         "info",
@@ -726,11 +742,6 @@
         "info",
         1,
         ""
-    ],
-    [
-        "info",
-        1,
-        "prev offer indexes: 4"
     ],
     [
         "info",
@@ -791,43 +802,7 @@
         1,
         [
             3,
-            2,
-            2
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            3,
-            3,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            3,
             4,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            4,
-            1,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            4,
-            2,
             0
         ]
     ],
@@ -859,62 +834,12 @@
     [
         "info",
         1,
-        "0,10,0 sugg now: 10 sugg prev: 10 wants now: 10"
+        "is poor offer"
     ],
     [
         "info",
         1,
-        "1,7,1 sugg now: 8 sugg prev: 7 wants now: 9"
-    ],
-    [
-        "info",
-        1,
-        "1,8,0 sugg now: 9 sugg prev: 8 wants now: 10"
-    ],
-    [
-        "info",
-        1,
-        "2,4,2 sugg now: 6 sugg prev: 4 wants now: 8"
-    ],
-    [
-        "info",
-        1,
-        "2,5,1 sugg now: 7 sugg prev: 5 wants now: 9"
-    ],
-    [
-        "info",
-        1,
-        "2,6,0 sugg now: 8 sugg prev: 6 wants now: 10"
-    ],
-    [
-        "info",
-        1,
-        "3,2,2 sugg now: 5 sugg prev: 2 wants now: 8"
-    ],
-    [
-        "info",
-        1,
-        "3,3,1 sugg now: 6 sugg prev: 3 wants now: 9"
-    ],
-    [
-        "info",
-        1,
-        "3,4,0 sugg now: 7 sugg prev: 4 wants now: 10"
-    ],
-    [
-        "info",
-        1,
-        "4,1,1 sugg now: 5 sugg prev: 1 wants now: 9"
-    ],
-    [
-        "info",
-        1,
-        "4,2,0 sugg now: 6 sugg prev: 2 wants now: 10"
-    ],
-    [
-        "info",
-        1,
-        "My actual offer 1,0,1 (4)"
+        "My actual offer 2,1,0 (8)"
     ],
     [
         "offer",
@@ -922,12 +847,12 @@
         [
             [
                 2,
-                1,
+                0,
                 0
             ],
             [
                 0,
-                0,
+                1,
                 1
             ]
         ]
@@ -936,6 +861,410 @@
         "info",
         0,
         "3 rounds left"
+    ],
+    [
+        "info",
+        0,
+        "suggested sum value: 0"
+    ],
+    [
+        "info",
+        0,
+        [
+            2,
+            1,
+            0
+        ]
+    ],
+    [
+        "info",
+        0,
+        [
+            1,
+            1,
+            0
+        ]
+    ],
+    [
+        "info",
+        0,
+        [
+            2,
+            0,
+            0
+        ]
+    ],
+    [
+        "info",
+        0,
+        [
+            0,
+            1,
+            0
+        ]
+    ],
+    [
+        "info",
+        0,
+        [
+            1,
+            0,
+            0
+        ]
+    ],
+    [
+        "info",
+        0,
+        [
+            0,
+            0,
+            0
+        ]
+    ],
+    [
+        "info",
+        0,
+        ""
+    ],
+    [
+        "info",
+        0,
+        [
+            0,
+            6,
+            4
+        ]
+    ],
+    [
+        "info",
+        0,
+        [
+            0,
+            7,
+            3
+        ]
+    ],
+    [
+        "info",
+        0,
+        [
+            0,
+            8,
+            2
+        ]
+    ],
+    [
+        "info",
+        0,
+        [
+            0,
+            9,
+            1
+        ]
+    ],
+    [
+        "info",
+        0,
+        [
+            0,
+            10,
+            0
+        ]
+    ],
+    [
+        "info",
+        0,
+        "curr offer: 2,0,0 (6)"
+    ],
+    [
+        "info",
+        0,
+        "0,6,4 sugg now: 10 sugg prev: 4 wants now: 6"
+    ],
+    [
+        "info",
+        0,
+        "0,7,3 sugg now: 10 sugg prev: 3 wants now: 7"
+    ],
+    [
+        "info",
+        0,
+        "0,8,2 sugg now: 10 sugg prev: 2 wants now: 8"
+    ],
+    [
+        "info",
+        0,
+        "0,9,1 sugg now: 10 sugg prev: 1 wants now: 9"
+    ],
+    [
+        "info",
+        0,
+        "0,10,0 sugg now: 10 sugg prev: 0 wants now: 10"
+    ],
+    [
+        "info",
+        0,
+        "My actual offer 2,0,0 (6)"
+    ],
+    [
+        "offer",
+        0,
+        [
+            [
+                2,
+                0,
+                0
+            ],
+            [
+                0,
+                1,
+                1
+            ]
+        ]
+    ],
+    [
+        "info",
+        1,
+        "3 rounds left"
+    ],
+    [
+        "info",
+        1,
+        "suggested sum value: 6"
+    ],
+    [
+        "info",
+        1,
+        [
+            2,
+            1,
+            0
+        ]
+    ],
+    [
+        "info",
+        1,
+        [
+            1,
+            1,
+            1
+        ]
+    ],
+    [
+        "info",
+        1,
+        [
+            1,
+            1,
+            0
+        ]
+    ],
+    [
+        "info",
+        1,
+        [
+            0,
+            1,
+            1
+        ]
+    ],
+    [
+        "info",
+        1,
+        [
+            2,
+            0,
+            1
+        ]
+    ],
+    [
+        "info",
+        1,
+        [
+            0,
+            1,
+            0
+        ]
+    ],
+    [
+        "info",
+        1,
+        [
+            2,
+            0,
+            0
+        ]
+    ],
+    [
+        "info",
+        1,
+        [
+            1,
+            0,
+            1
+        ]
+    ],
+    [
+        "info",
+        1,
+        [
+            1,
+            0,
+            0
+        ]
+    ],
+    [
+        "info",
+        1,
+        [
+            0,
+            0,
+            1
+        ]
+    ],
+    [
+        "info",
+        1,
+        [
+            0,
+            0,
+            0
+        ]
+    ],
+    [
+        "info",
+        1,
+        ""
+    ],
+    [
+        "info",
+        1,
+        [
+            1,
+            7,
+            1
+        ]
+    ],
+    [
+        "info",
+        1,
+        [
+            1,
+            8,
+            0
+        ]
+    ],
+    [
+        "info",
+        1,
+        [
+            2,
+            4,
+            2
+        ]
+    ],
+    [
+        "info",
+        1,
+        [
+            2,
+            5,
+            1
+        ]
+    ],
+    [
+        "info",
+        1,
+        [
+            2,
+            6,
+            0
+        ]
+    ],
+    [
+        "info",
+        1,
+        [
+            3,
+            4,
+            0
+        ]
+    ],
+    [
+        "info",
+        1,
+        "curr offer: 1,1,0 (6)"
+    ],
+    [
+        "info",
+        1,
+        "the same my sum value 6"
+    ],
+    [
+        "info",
+        1,
+        "curr offer: 2,0,1 (6)"
+    ],
+    [
+        "info",
+        1,
+        "1,7,1 sugg now: 7 sugg prev: 1 wants now: 2"
+    ],
+    [
+        "info",
+        1,
+        "1,8,0 sugg now: 8 sugg prev: 1 wants now: 2"
+    ],
+    [
+        "info",
+        1,
+        "2,4,2 sugg now: 4 sugg prev: 2 wants now: 4"
+    ],
+    [
+        "info",
+        1,
+        "2,5,1 sugg now: 5 sugg prev: 2 wants now: 4"
+    ],
+    [
+        "info",
+        1,
+        "2,6,0 sugg now: 6 sugg prev: 2 wants now: 4"
+    ],
+    [
+        "info",
+        1,
+        "3,4,0 sugg now: 4 sugg prev: 3 wants now: 6"
+    ],
+    [
+        "info",
+        1,
+        "fair deal. But we have a lot of time. What about my previous offer?"
+    ],
+    [
+        "info",
+        1,
+        "My actual offer 2,1,0 (8)"
+    ],
+    [
+        "offer",
+        1,
+        [
+            [
+                2,
+                0,
+                0
+            ],
+            [
+                0,
+                1,
+                1
+            ]
+        ]
+    ],
+    [
+        "info",
+        0,
+        "2 rounds left"
     ],
     [
         "info",
@@ -945,13 +1274,22 @@
     [
         "info",
         0,
-        "suggested sum value: 7"
+        "suggested sum value: 0"
     ],
     [
         "info",
         0,
         [
             2,
+            1,
+            0
+        ]
+    ],
+    [
+        "info",
+        0,
+        [
+            1,
             1,
             0
         ]
@@ -968,38 +1306,78 @@
     [
         "info",
         0,
+        [
+            0,
+            1,
+            0
+        ]
+    ],
+    [
+        "info",
+        0,
+        [
+            1,
+            0,
+            0
+        ]
+    ],
+    [
+        "info",
+        0,
+        [
+            0,
+            0,
+            0
+        ]
+    ],
+    [
+        "info",
+        0,
         ""
     ],
     [
         "info",
         0,
-        "prev offer indexes: 0,0"
-    ],
-    [
-        "info",
-        0,
         [
-            1,
-            1,
-            7
+            0,
+            6,
+            4
         ]
     ],
     [
         "info",
         0,
         [
-            1,
-            2,
-            6
+            0,
+            7,
+            3
         ]
     ],
     [
         "info",
         0,
         [
-            1,
-            3,
-            5
+            0,
+            8,
+            2
+        ]
+    ],
+    [
+        "info",
+        0,
+        [
+            0,
+            9,
+            1
+        ]
+    ],
+    [
+        "info",
+        0,
+        [
+            0,
+            10,
+            0
         ]
     ],
     [
@@ -1043,15 +1421,6 @@
         0,
         [
             2,
-            2,
-            4
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            2,
             3,
             3
         ]
@@ -1068,67 +1437,17 @@
     [
         "info",
         0,
-        "curr offer: 2,0,0 (6)"
+        "curr offer: 0,1,0 (4)"
     ],
     [
         "info",
         0,
-        "1,1,7 sugg now: 8 sugg prev: 7 wants now: 8"
+        "is poor offer"
     ],
     [
         "info",
         0,
-        "1,2,6 sugg now: 8 sugg prev: 6 wants now: 7"
-    ],
-    [
-        "info",
-        0,
-        "1,3,5 sugg now: 8 sugg prev: 5 wants now: 6"
-    ],
-    [
-        "info",
-        0,
-        "1,4,4 sugg now: 8 sugg prev: 4 wants now: 5"
-    ],
-    [
-        "info",
-        0,
-        "1,5,3 sugg now: 8 sugg prev: 3 wants now: 4"
-    ],
-    [
-        "info",
-        0,
-        "1,6,2 sugg now: 8 sugg prev: 2 wants now: 3"
-    ],
-    [
-        "info",
-        0,
-        "1,7,1 sugg now: 8 sugg prev: 1 wants now: 2"
-    ],
-    [
-        "info",
-        0,
-        "2,2,4 sugg now: 6 sugg prev: 4 wants now: 6"
-    ],
-    [
-        "info",
-        0,
-        "2,3,3 sugg now: 6 sugg prev: 3 wants now: 5"
-    ],
-    [
-        "info",
-        0,
-        "2,4,2 sugg now: 6 sugg prev: 2 wants now: 4"
-    ],
-    [
-        "info",
-        0,
-        "previous offer (max sum value)"
-    ],
-    [
-        "info",
-        0,
-        "My actual offer 2,1,0 (10)"
+        "My actual offer 2,0,0 (6)"
     ],
     [
         "offer",
@@ -1136,12 +1455,12 @@
         [
             [
                 2,
-                1,
+                0,
                 0
             ],
             [
                 0,
-                0,
+                1,
                 1
             ]
         ]
@@ -1149,12 +1468,12 @@
     [
         "info",
         1,
-        "3 rounds left"
+        "2 rounds left"
     ],
     [
         "info",
         1,
-        "suggested sum value: 2"
+        "suggested sum value: 6"
     ],
     [
         "info",
@@ -1187,15 +1506,6 @@
         "info",
         1,
         [
-            2,
-            0,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
             0,
             1,
             1
@@ -1207,6 +1517,15 @@
         [
             2,
             0,
+            1
+        ]
+    ],
+    [
+        "info",
+        1,
+        [
+            0,
+            1,
             0
         ]
     ],
@@ -1214,8 +1533,8 @@
         "info",
         1,
         [
+            2,
             0,
-            1,
             0
         ]
     ],
@@ -1259,11 +1578,6 @@
         "info",
         1,
         ""
-    ],
-    [
-        "info",
-        1,
-        "prev offer indexes: 4,7"
     ],
     [
         "info",
@@ -1315,24 +1629,6 @@
         1,
         [
             3,
-            2,
-            2
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            3,
-            3,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            3,
             4,
             0
         ]
@@ -1340,843 +1636,52 @@
     [
         "info",
         1,
-        [
-            4,
-            1,
-            1
-        ]
+        "curr offer: 1,1,0 (6)"
     ],
     [
         "info",
         1,
-        [
-            4,
-            2,
-            0
-        ]
+        "the same my sum value 6"
     ],
     [
         "info",
         1,
-        "curr offer: 1,0,0 (2)"
+        "curr offer: 2,0,1 (6)"
     ],
     [
         "info",
         1,
-        "the same my sum value 2"
+        "1,7,1 sugg now: 7 sugg prev: 1 wants now: 2"
     ],
     [
         "info",
         1,
-        "curr offer: 0,0,1 (2)"
+        "1,8,0 sugg now: 8 sugg prev: 1 wants now: 2"
     ],
     [
         "info",
         1,
-        "is too poor offer"
+        "2,4,2 sugg now: 4 sugg prev: 2 wants now: 4"
     ],
     [
         "info",
         1,
-        "My actual offer 1,0,1 (4)"
-    ],
-    [
-        "offer",
-        1,
-        [
-            [
-                2,
-                1,
-                0
-            ],
-            [
-                0,
-                0,
-                1
-            ]
-        ]
-    ],
-    [
-        "info",
-        0,
-        "2 rounds left"
-    ],
-    [
-        "info",
-        0,
-        "suggested sum value: 7"
-    ],
-    [
-        "info",
-        0,
-        [
-            2,
-            1,
-            0
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            2,
-            0,
-            0
-        ]
-    ],
-    [
-        "info",
-        0,
-        ""
-    ],
-    [
-        "info",
-        0,
-        "prev offer indexes: 0,0,0"
-    ],
-    [
-        "info",
-        0,
-        [
-            1,
-            1,
-            7
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            1,
-            2,
-            6
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            1,
-            3,
-            5
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            1,
-            4,
-            4
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            1,
-            5,
-            3
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            1,
-            6,
-            2
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            1,
-            7,
-            1
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            2,
-            2,
-            4
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            2,
-            3,
-            3
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            2,
-            4,
-            2
-        ]
-    ],
-    [
-        "info",
-        0,
-        "curr offer: 2,0,0 (6)"
-    ],
-    [
-        "info",
-        0,
-        "1,1,7 sugg now: 8 sugg prev: 7 wants now: 8"
-    ],
-    [
-        "info",
-        0,
-        "1,2,6 sugg now: 8 sugg prev: 6 wants now: 7"
-    ],
-    [
-        "info",
-        0,
-        "1,3,5 sugg now: 8 sugg prev: 5 wants now: 6"
-    ],
-    [
-        "info",
-        0,
-        "1,4,4 sugg now: 8 sugg prev: 4 wants now: 5"
-    ],
-    [
-        "info",
-        0,
-        "1,5,3 sugg now: 8 sugg prev: 3 wants now: 4"
-    ],
-    [
-        "info",
-        0,
-        "1,6,2 sugg now: 8 sugg prev: 2 wants now: 3"
-    ],
-    [
-        "info",
-        0,
-        "1,7,1 sugg now: 8 sugg prev: 1 wants now: 2"
-    ],
-    [
-        "info",
-        0,
-        "2,2,4 sugg now: 6 sugg prev: 4 wants now: 6"
-    ],
-    [
-        "info",
-        0,
-        "2,3,3 sugg now: 6 sugg prev: 3 wants now: 5"
-    ],
-    [
-        "info",
-        0,
-        "2,4,2 sugg now: 6 sugg prev: 2 wants now: 4"
-    ],
-    [
-        "info",
-        0,
-        "previous offer (max sum value)"
-    ],
-    [
-        "info",
-        0,
-        "My actual offer 2,1,0 (10)"
-    ],
-    [
-        "offer",
-        0,
-        [
-            [
-                2,
-                1,
-                0
-            ],
-            [
-                0,
-                0,
-                1
-            ]
-        ]
+        "2,5,1 sugg now: 5 sugg prev: 2 wants now: 4"
     ],
     [
         "info",
         1,
-        "2 rounds left"
+        "2,6,0 sugg now: 6 sugg prev: 2 wants now: 4"
     ],
     [
         "info",
         1,
-        "suggested sum value: 2"
+        "3,4,0 sugg now: 4 sugg prev: 3 wants now: 6"
     ],
     [
         "info",
         1,
-        [
-            2,
-            1,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            1,
-            1,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            1,
-            1,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            2,
-            0,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            0,
-            1,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            2,
-            0,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            0,
-            1,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            1,
-            0,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            1,
-            0,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            0,
-            0,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            0,
-            0,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        ""
-    ],
-    [
-        "info",
-        1,
-        "prev offer indexes: 4,7,7"
-    ],
-    [
-        "info",
-        1,
-        [
-            1,
-            7,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            1,
-            8,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            2,
-            4,
-            2
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            2,
-            5,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            2,
-            6,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            3,
-            2,
-            2
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            3,
-            3,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            3,
-            4,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            4,
-            1,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            4,
-            2,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        "curr offer: 1,0,0 (2)"
-    ],
-    [
-        "info",
-        1,
-        "the same my sum value 2"
-    ],
-    [
-        "info",
-        1,
-        "curr offer: 0,0,1 (2)"
-    ],
-    [
-        "info",
-        1,
-        "is too poor offer"
-    ],
-    [
-        "info",
-        1,
-        "My actual offer 1,0,1 (4)"
-    ],
-    [
-        "offer",
-        1,
-        [
-            [
-                2,
-                1,
-                0
-            ],
-            [
-                0,
-                0,
-                1
-            ]
-        ]
-    ],
-    [
-        "info",
-        0,
-        "1 rounds left"
-    ],
-    [
-        "info",
-        0,
-        "suggested sum value: 7"
-    ],
-    [
-        "info",
-        0,
-        [
-            2,
-            1,
-            0
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            2,
-            0,
-            0
-        ]
-    ],
-    [
-        "info",
-        0,
-        ""
-    ],
-    [
-        "info",
-        0,
-        "prev offer indexes: 0,0,0,0"
-    ],
-    [
-        "info",
-        0,
-        [
-            1,
-            1,
-            7
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            1,
-            2,
-            6
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            1,
-            3,
-            5
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            1,
-            4,
-            4
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            1,
-            5,
-            3
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            1,
-            6,
-            2
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            1,
-            7,
-            1
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            2,
-            2,
-            4
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            2,
-            3,
-            3
-        ]
-    ],
-    [
-        "info",
-        0,
-        [
-            2,
-            4,
-            2
-        ]
-    ],
-    [
-        "info",
-        0,
-        "curr offer: 2,0,0 (6)"
-    ],
-    [
-        "info",
-        0,
-        "1,1,7 sugg now: 8 sugg prev: 7 wants now: 8"
-    ],
-    [
-        "info",
-        0,
-        "1,2,6 sugg now: 8 sugg prev: 6 wants now: 7"
-    ],
-    [
-        "info",
-        0,
-        "1,3,5 sugg now: 8 sugg prev: 5 wants now: 6"
-    ],
-    [
-        "info",
-        0,
-        "1,4,4 sugg now: 8 sugg prev: 4 wants now: 5"
-    ],
-    [
-        "info",
-        0,
-        "1,5,3 sugg now: 8 sugg prev: 3 wants now: 4"
-    ],
-    [
-        "info",
-        0,
-        "1,6,2 sugg now: 8 sugg prev: 2 wants now: 3"
-    ],
-    [
-        "info",
-        0,
-        "1,7,1 sugg now: 8 sugg prev: 1 wants now: 2"
-    ],
-    [
-        "info",
-        0,
-        "2,2,4 sugg now: 6 sugg prev: 4 wants now: 6"
-    ],
-    [
-        "info",
-        0,
-        "2,3,3 sugg now: 6 sugg prev: 3 wants now: 5"
-    ],
-    [
-        "info",
-        0,
-        "2,4,2 sugg now: 6 sugg prev: 2 wants now: 4"
-    ],
-    [
-        "info",
-        0,
-        "previous offer (max sum value)"
-    ],
-    [
-        "info",
-        0,
-        "My actual offer 2,1,0 (10)"
-    ],
-    [
-        "offer",
-        0,
-        [
-            [
-                2,
-                1,
-                0
-            ],
-            [
-                0,
-                0,
-                1
-            ]
-        ]
-    ],
-    [
-        "info",
-        1,
-        "1 rounds left"
-    ],
-    [
-        "info",
-        1,
-        "suggested sum value: 2"
-    ],
-    [
-        "info",
-        1,
-        [
-            2,
-            1,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            1,
-            1,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            1,
-            1,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            2,
-            0,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            0,
-            1,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            2,
-            0,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            0,
-            1,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            1,
-            0,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            1,
-            0,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            0,
-            0,
-            1
-        ]
-    ],
-    [
-        "info",
-        1,
-        [
-            0,
-            0,
-            0
-        ]
-    ],
-    [
-        "info",
-        1,
-        "I should accept your offer in last round"
+        "fair deal"
     ],
     [
         "offer",
@@ -2194,7 +1699,7 @@
     [
         "score",
         0,
-        10
+        6
     ],
     [
         "valuation",
@@ -2208,7 +1713,7 @@
     [
         "score",
         1,
-        2
+        6
     ],
     [
         "done",
