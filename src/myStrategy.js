@@ -246,8 +246,13 @@ module.exports = class Agent {
 			prevOfferIndex = this.getPreviosOfferIndex();
 
 			if (this.log !== null)
-				for (i in this.possibleOffers)
-					this.log(this.possibleOffers[i]);
+				for (i in this.possibleOffers){		
+					let o = this.possibleOffers[i];
+					let sum = this.getOfferSumValue(o);
+					let enemyOffer = this.getEnemyOffer(o);
+					let enemyAverage = this.getAverageEnemyValue(enemyOffer); 			
+					this.log(`${this.possibleOffers[i]} ${sum} ${enemyAverage}`);
+				}
 
 			if (suggestedSumValue >= MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER){
 
@@ -284,6 +289,7 @@ module.exports = class Agent {
 				if (this.log !== null) this.log(this.possibleEnemyValues[i]);
 
 		let returnBackOfferIndex = this.getReturnBackOfferIndex();	
+		if (this.log !== null) this.log(`prevOfferIndex ${prevOfferIndex}`);
 		if (this.log != null) this.log(`returnBackOfferIndex ${returnBackOfferIndex}`);		
 
 		let poorEnemyOfferIndex = -1;
