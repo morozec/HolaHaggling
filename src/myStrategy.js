@@ -352,7 +352,7 @@ module.exports = class Agent {
                     let enemyValueWantsNow = this.getOfferSumValueWithValues(enemyOffer, pev);
 					if (enemyValueWantsNow > maxEnemyValueWantsNow) maxEnemyValueWantsNow = enemyValueWantsNow;
 
-					if (this.log !== null) this.log(`${pev} sugg now: ${enemyValue} sugg prev: ${prevEnemyValue} wants now: ${enemyValueWantsNow}`);
+					if (this.log !== null) this.log(`${pev} sugg now: ${enemyValue} sugg prev: ${prevEnemyValue} prev index: ${prevOfferIndex} wants now: ${enemyValueWantsNow}`);
 				}			
 				
 				//Мое текущее предложение уменьшает максимальную суммарную выручку игроков (по сравнению с текущим предложением соперника)
@@ -370,7 +370,7 @@ module.exports = class Agent {
 					}
 				}
 
-				//минимальная суммарная выручка с прошлого предложения была >= минимальной суммарной выручке с этого
+				//минимальная суммарная выручка с прошлого предложения была >= минимальной суммарной выручке с этого				
 				if (myPrevSumValue + minPrevEnemyValue >= mySumValue + minEnemyValue){
 					if (mySumValue <= minPrevEnemyValue){//моя выручка c этого предложения не больше, чем минимальная выручка соперника с прошлого предложения
 						//т.о. максимизируем суммарную выручку и зарабатываем не меньше соперника						
@@ -552,6 +552,7 @@ module.exports = class Agent {
 		return possibleEnemyValues;
 	}
 
+	//метод исключает те ценники соперника, в которых предмет, не запрошенный соперником, имеет большую цену, чем запрошенный предмет
 	excludeBigZeroOfferValues(offer, possibleEnemyValues, setZeroValues){
 		let res = [];
 		for (let i = 0; i < possibleEnemyValues.length; ++i){
