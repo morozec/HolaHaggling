@@ -397,6 +397,11 @@ module.exports = class Agent {
 				currOfferIndex = returnBackOfferIndex;
 				currOffer = this.possibleOffers[currOfferIndex];
 				mySumValue = this.getOfferSumValue(currOffer);	
+				if (suggestedSumValue > 0 && mySumValue <= suggestedSumValue){
+					if (this.log !== null) this.log("my return back offer is not better for me");
+					return;
+				}
+
 				if (this.log !== null) this.log("Oh, good offer! But we have a lot of time. What about my previous offer?")
 			}
 		}
