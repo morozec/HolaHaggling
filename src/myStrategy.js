@@ -308,6 +308,7 @@ module.exports = class Agent {
 		let poorEnemyOfferIndex = -1;
 		while (currOfferIndex < this.possibleOffers.length - 1){
 			currOfferIndex++;
+			//TODO: не предлагать уже предложенное
 			//if (this.getOfferIndex(this.possibleOffers[currOfferIndex], this.myOffers) !== -1) continue;			
 
             currOffer = this.possibleOffers[currOfferIndex];
@@ -393,7 +394,7 @@ module.exports = class Agent {
 				if (myPrevSumValue + minPrevEnemyValue >= mySumValue + minEnemyValue){
 					if (mySumValue <= minPrevEnemyValue){//моя выручка c этого предложения не больше, чем минимальная выручка соперника с прошлого предложения
 						//т.о. максимизируем суммарную выручку и зарабатываем не меньше соперника						
-						if (this.log !== null) this.log('previous offer (min)');
+						if (this.log !== null) this.log(`previous offer (min) ${myPrevSumValue + minPrevEnemyValue} >= ${mySumValue + minEnemyValue}`);
 						currOfferIndex = returnBackOfferIndex;
 						break
 					}
@@ -403,7 +404,7 @@ module.exports = class Agent {
 						let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer);
 						let averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer);
 						if (myPrevSumValue + averageEnemyPrevValue > mySumValue + averageEnemyValue){
-							if (this.log !== null) this.log('previous offer (max sum value)');
+							if (this.log !== null) this.log(`previous offer (max sum value) ${myPrevSumValue + averageEnemyPrevValue} > ${mySumValue + averageEnemyValue}`);
 							currOfferIndex = returnBackOfferIndex;
 							break
 						}
@@ -414,16 +415,16 @@ module.exports = class Agent {
 				//нет смысла дальше его уменьшать
                 let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer); //средняя выручка соперника с моего текущего предложения
                 if (averageEnemyValue >= MIN_AVERAGE_ENEMY_VALUE) {
-					// if (prevOfferIndex >= 0){
-					// 	let prevOffer = this.possibleOffers[prevOfferIndex];
-					// 	let enemyPrevOffer = this.getEnemyOffer(prevOffer);
-					// 	if (averageEnemyValue >= this.getAverageEnemyValue(enemyPrevOffer)){
-					// 		this.log(`current average enemy value is not less than previous`);
-					// 	}
-					// 	else break;						
-					// }
-					// else break;
-					break;
+					if (prevOfferIndex >= 0){
+						let prevOffer = this.possibleOffers[prevOfferIndex];
+						let enemyPrevOffer = this.getEnemyOffer(prevOffer);
+						let averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer);
+						if (averageEnemyValue <= averageEnemyPrevValue){
+							this.log(`current average enemy value is not more than previous ${averageEnemyValue} <= ${averageEnemyPrevValue}`);
+						}
+						else break;						
+					}
+					else break;					
 				}
 				else {
 					if (this.log != null) this.log(`too bad for my enemy ${averageEnemyValue}`);
