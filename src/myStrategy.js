@@ -72,6 +72,7 @@ module.exports = class Agent {
 		
 		for (let i = this.myOffers.length - 2; i >= 0; --i){
 			let currOffer = this.myOffers[i];
+			if (this.getOfferSumValue(currOffer) === this.getOfferSumValue(this.possibleOffers[index])) continue;
 			let currIndex = this.getOfferIndex(currOffer, this.possibleOffers);
 			if (currIndex !== -1){
 				let currEnemyOffer = this.getEnemyOffer(currOffer);
@@ -80,7 +81,7 @@ module.exports = class Agent {
 				else index = currIndex;
 			}			
 		}
-		return 0;
+		return index;
 	}
 
 	getNotZeroValuesOffers(){
