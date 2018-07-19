@@ -295,7 +295,7 @@ module.exports = class Agent {
 		let poorEnemyOfferIndex = -1;
 		while (currOfferIndex < this.possibleOffers.length - 1){
 			currOfferIndex++;
-			if (this.getOfferIndex(this.possibleOffers[currOfferIndex], this.myOffers) !== -1) continue;			
+			//if (this.getOfferIndex(this.possibleOffers[currOfferIndex], this.myOffers) !== -1) continue;			
 
             currOffer = this.possibleOffers[currOfferIndex];
             mySumValue = this.getOfferSumValue(currOffer);
