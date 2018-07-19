@@ -318,8 +318,8 @@ module.exports = class Agent {
 			
 			
 			if (currOfferIndex < this.possibleOffers.length - 1 && 
-				mySumValue === this.getOfferSumValue(this.possibleOffers[currOfferIndex + 1])) {
-				if (this.log !== null) this.log(`the same my sum value ${mySumValue}`);
+				mySumValue <= this.getOfferSumValue(this.possibleOffers[currOfferIndex + 1])) {
+				if (this.log !== null) this.log(`the next my offer is better for me`);
 				continue
 			}
 
@@ -685,8 +685,11 @@ function getOfferSumValue(o, values){
 
 function comparator(values, possibleEnemyValues, counts){
 	return function(offerA, offerB){
-        let diff = -getOfferSumValue(offerA, values) + getOfferSumValue(offerB, values);
-		if (diff !== 0 || possibleEnemyValues == null) return diff;
+		if (possibleEnemyValues == null){
+			let diff = -getOfferSumValue(offerA, values) + getOfferSumValue(offerB, values);
+			return diff;
+		}        
+		
         let aEnemyOffer = getEnemyOffer(offerA,counts);
         let aAverageEnemyValue = getAverageEnemyValue(aEnemyOffer, possibleEnemyValues);
         let bEnemyOffer = getEnemyOffer(offerB, counts);
