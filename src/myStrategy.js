@@ -334,12 +334,12 @@ module.exports = class Agent {
             let isPoorOffer = this.isPoorOffer(currOffer);
             if (isPoorOffer){
 				//TODO: второй игрок может сильно опустить свою цену (напр., до 4 за 3 хода до конца)
-                let needMakePoorOffer = !this.isFirstPlayer && isSameEnemyOffer;
-                if (!needMakePoorOffer){
+                // let needMakePoorOffer = !this.isFirstPlayer && isSameEnemyOffer;
+                // if (!needMakePoorOffer){
 					currOfferIndex = poorEnemyOfferIndex > -1 ? poorEnemyOfferIndex : returnBackOfferIndex;
 					if (this.log !== null) this.log('is poor offer');
 					break
-				}
+				// }
 			}			
 
 			currOffer = this.possibleOffers[currOfferIndex];
