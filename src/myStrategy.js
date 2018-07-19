@@ -132,7 +132,7 @@ module.exports = class Agent {
 		return res;
 	}
 
-	isSameEnemyOffer(enemyOffer){
+	isSameEnemyOffer(enemyOffer){//предложение противника совпадает с предложением на прошлом шаге
 		if (this.previousEnemyOffer == null) return false;
 		for (let i = 0; i < enemyOffer.length; ++i)
 			if (enemyOffer[i] !== this.previousEnemyOffer[i]) return false;
@@ -333,6 +333,7 @@ module.exports = class Agent {
 
             let isPoorOffer = this.isPoorOffer(currOffer);
             if (isPoorOffer){
+				//TODO: второй игрок может сильно опустить свою цену (напр., до 4 за 3 хода до конца)
                 let needMakePoorOffer = !this.isFirstPlayer && isSameEnemyOffer;
                 if (!needMakePoorOffer){
 					currOfferIndex = poorEnemyOfferIndex > -1 ? poorEnemyOfferIndex : returnBackOfferIndex;
@@ -400,6 +401,8 @@ module.exports = class Agent {
 						break
 					}
 				}				
+				//TODO: очень агрессивная политика, может отпугнуть соперника
+				//особенно, если есть вариант, когда при текущем предложении, он получит 0
 				if (minEnemyValue >= MIN_AVERAGE_ENEMY_VALUE)
 					if (this.isFirstPlayer || mySumValue < MIN_MY_SUM_VALUE_TO_REDUCE_OFFER){//если я первый игрок или моя выручка достаточно снижена, играем агрессивно
 						let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer);
