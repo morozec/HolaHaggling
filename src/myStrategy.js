@@ -21,9 +21,9 @@ module.exports = class Agent {
 		this.possibleOffers = this.getNotMaxCountOffers();
 		this.possibleOffers.sort(comparator(this.values));
 		//for (var i in this.possibleOffers)
-		//	this.log(this.possibleOffers[i]);		
+		//	this.log(this.possibleOffers[i]);	
 
-		this.prevOfferValue = null;
+		
 		this.possibleEnemyValues = null;
 		this.previousEnemyOffer = null;			
 		
@@ -31,16 +31,25 @@ module.exports = class Agent {
 		this.enemyOffers = [];
 	}
 
-	getPreviosOfferIndex(){
+	// getPreviosOfferIndex(){
 
-		if (this.prevOfferValue == null) return -1;//no offers yet
+	// 	if (this.prevOfferValue == null) return -1;//no offers yet
 		
-		for (let i = 0; i < this.possibleOffers.length; ++i){
-            let po = this.possibleOffers[i];
-            let sumValue = this.getOfferSumValue(po);
-            if (sumValue < this.prevOfferValue) return i-1
+	// 	for (let i = 0; i < this.possibleOffers.length; ++i){
+    //         let po = this.possibleOffers[i];
+    //         let sumValue = this.getOfferSumValue(po);
+    //         if (sumValue < this.prevOfferValue) return i-1
+	// 	}
+	// 	return this.possibleOffers.length - 1;
+	// }
+
+	getPreviosOfferIndex(){		
+		for (let i = this.myOffers.length - 1; i >= 0; -- i){
+			let offer = this.myOffers[i];
+			let index = this.getOfferIndex(offer, this.possibleOffers);
+			if (index >= 0) return index;
 		}
-		return this.possibleOffers.length - 1;
+		return -1;
 	}
 
 	getReturnBackOfferIndex(){		
@@ -201,7 +210,7 @@ module.exports = class Agent {
 
 		if (this.log !== null) this.log(`${this.rounds} rounds left`);
 
-        let prevOfferIndex = this.getPreviosOfferIndex();
+        //let prevOfferIndex = this.getPreviosOfferIndex();
         let isSameEnemyOffer = false;
         if (o)
         {
@@ -231,7 +240,7 @@ module.exports = class Agent {
             suggestedSumValue = this.getOfferSumValue(o);
             if (this.log !== null) this.log(`suggested sum value: ${suggestedSumValue}`);
 
-			if (prevOfferIndex >= 0 && suggestedSumValue >= this.getOfferSumValue(this.possibleOffers[prevOfferIndex])) {
+			if (this.myOffers.length > 0 && suggestedSumValue >= this.getOfferSumValue(this.myOffers[this.myOffers.length - 1])) {
 				if (this.log !== null) this.log('current enemy offer is not worse that my previous');//TODO: можно не соглашатсья в раннем раунде
                 return;
             }
@@ -243,7 +252,7 @@ module.exports = class Agent {
 			}
 
 			this.possibleOffers.sort(comparator(this.values, this.possibleEnemyValues, this.counts));
-			prevOfferIndex = this.getPreviosOfferIndex();
+			//prevOfferIndex = this.getPreviosOfferIndex();
 
 			if (this.log !== null)
 				for (i in this.possibleOffers){		
@@ -281,17 +290,21 @@ module.exports = class Agent {
 		}
 		
 
-        let currOfferIndex = prevOfferIndex;
+        
         if (this.log !== null) this.log('');
 		
 		if (this.possibleEnemyValues != null)
 			for (let i = 0; i < this.possibleEnemyValues.length; ++i)
 				if (this.log !== null) this.log(this.possibleEnemyValues[i]);
 
+		let prevOfferIndex = this.getPreviosOfferIndex();
 		let returnBackOfferIndex = this.getReturnBackOfferIndex();	
-		if (this.log !== null) this.log(`prevOfferIndex ${prevOfferIndex}`);
+		if (this.log !== null) 
+			if (this.myOffers.length > 0)
+				this.log(`prev offer ${this.myOffers[this.myOffers.length - 1]}`);
 		if (this.log != null) this.log(`returnBackOfferIndex ${returnBackOfferIndex}`);		
 
+		let currOfferIndex = prevOfferIndex;
 		let poorEnemyOfferIndex = -1;
 		while (currOfferIndex < this.possibleOffers.length - 1){
 			currOfferIndex++;
@@ -444,7 +457,6 @@ module.exports = class Agent {
 			}
 		}
 
-		this.prevOfferValue = mySumValue;			
 		this.rounds--;		
 
 		if (this.log !== null) this.log(`My actual offer ${currOffer} (${mySumValue})`);
