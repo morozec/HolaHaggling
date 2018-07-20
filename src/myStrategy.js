@@ -232,7 +232,7 @@ module.exports = class Agent {
 			let pev = this.possibleEnemyValues[i];
 			let enemyValue = this.getOfferSumValueWithValues(enemyCurrOffer, pev);
 			if (enemyValue < minEnemyValue) minEnemyValue = enemyValue;		
-			if (enemyValue < maxEnemyValue) maxEnemyValue = enemyValue;
+			if (enemyValue > maxEnemyValue) maxEnemyValue = enemyValue;
 			let prevEnemyValue = this.getOfferSumValueWithValues(enemyPrevOffer, pev);
 			if (prevEnemyValue < minPrevEnemyValue) minPrevEnemyValue = prevEnemyValue;
 			if (prevEnemyValue > maxPrevEnemyValue) maxPrevEnemyValue = prevEnemyValue;
@@ -247,7 +247,7 @@ module.exports = class Agent {
 		if (suggestedSumValue + maxEnemyValueWantsNow > mySumValue + maxEnemyValue){				
 			if (suggestedSumValue >= maxEnemyValueWantsNow){//я заработаю не меньше соперника
 				if (this.isFirstPlayer && this.rounds === 1 || !this.isFirstPlayer && this.rounds <= 2) {
-					if (this.log !== null) this.log(`fair deal`);
+					if (this.log !== null) this.log(`fair deal ${suggestedSumValue + maxEnemyValueWantsNow} ${mySumValue + maxEnemyValue}`);
 					return 'accept';
 				}
 				else{
