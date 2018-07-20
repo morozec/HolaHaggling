@@ -1,6 +1,7 @@
 'use strict'; /*jslint node:true*/
 
 module.exports = class Agent {
+	
 
     constructor(me, counts, values, max_rounds, log){
 		this.counts = counts;
@@ -28,7 +29,7 @@ module.exports = class Agent {
 		this.previousEnemyOffer = null;			
 		
 		this.myOffers = [];
-		this.enemyOffers = [];
+		this.enemyOffers = [];		
 	}
 
 	// getPreviosOfferIndex(){
@@ -195,19 +196,86 @@ module.exports = class Agent {
 		let newPos = this.getEnemyZeroIndexesOffers(enemyZeroIndexes, possibleOffers);				
 		return newPos;	
 	}
+
+	getCurrOfferIndex(prevOfferIndex, enemyOffer, enemyCurrOffer, suggestedSumValue, mySumValue){
+		let maxSumValue = this.getMaxSumValue();       
+		const MIN_MY_SUM_VALUE_TO_REDUCE_OFFER = maxSumValue*0.5 + 1;
+ 		const MIN_AVERAGE_ENEMY_VALUE = maxSumValue * 0.3;
+
+		let prevOffer = this.possibleOffers[prevOfferIndex];
+		let myPrevSumValue = this.getOfferSumValue(prevOffer);	//моя выручка с прошлого (отличного от текущего) предложения
+		let minEnemyValue = Number.MAX_SAFE_INTEGER; 			//минимальная выручка соперника с текущего предложения
+		let maxEnemyValue = 0;									//максимальная выручка соперника с текущего предложения
+		let minPrevEnemyValue = Number.MAX_SAFE_INTEGER;		//минимальная выручка соперника с прошлого предложения
+		let maxPrevEnemyValue = 0;								//максимальная выручка соперника с прошлого предложения
+
+		let enemyPrevOffer = this.getEnemyOffer(prevOffer);		//прошлое предложение (если смотреть со стороны соперника)
+
+		let maxEnemyValueWantsNow = 0;							//максимальная выручка, которую может заработать соперник со СВОЕГО предложения
+
+				
+
+		for (let i in this.possibleEnemyValues){
+			let pev = this.possibleEnemyValues[i];
+			let enemyValue = this.getOfferSumValueWithValues(enemyCurrOffer, pev);
+			if (enemyValue < minEnemyValue) minEnemyValue = enemyValue;		
+			if (enemyValue < maxEnemyValue) maxEnemyValue = enemyValue;
+			let prevEnemyValue = this.getOfferSumValueWithValues(enemyPrevOffer, pev);
+			if (prevEnemyValue < minPrevEnemyValue) minPrevEnemyValue = prevEnemyValue;
+			if (prevEnemyValue > maxPrevEnemyValue) maxPrevEnemyValue = prevEnemyValue;
+
+			let enemyValueWantsNow = this.getOfferSumValueWithValues(enemyOffer, pev);
+			if (enemyValueWantsNow > maxEnemyValueWantsNow) maxEnemyValueWantsNow = enemyValueWantsNow;
+
+			if (this.log !== null) this.log(`${pev} sugg now: ${enemyValue} sugg prev: ${prevEnemyValue} prev index: ${prevOfferIndex} wants now: ${enemyValueWantsNow}`);
+		}			
+		
+		//Мое текущее предложение уменьшает максимальную суммарную выручку игроков (по сравнению с текущим предложением соперника)
+		if (suggestedSumValue + maxEnemyValueWantsNow > mySumValue + maxEnemyValue){				
+			if (suggestedSumValue >= maxEnemyValueWantsNow){//я заработаю не меньше соперника
+				if (this.isFirstPlayer && this.rounds === 1 || !this.isFirstPlayer && this.rounds <= 2) {
+					if (this.log !== null) this.log(`fair deal`);
+					return 'accept';
+				}
+				else{
+					if (this.log !== null) this.log(`fair deal. But we have a lot of time. What about my previous offer?`);
+					return 'back';
+					
+				}
+			}
+		}
+
+		//минимальная суммарная выручка с прошлого предложения была >= минимальной суммарной выручке с этого				
+		if (myPrevSumValue + minPrevEnemyValue >= mySumValue + minEnemyValue){
+			if (mySumValue <= minPrevEnemyValue){//моя выручка c этого предложения не больше, чем минимальная выручка соперника с прошлого предложения
+				//т.о. максимизируем суммарную выручку и зарабатываем не меньше соперника						
+				if (this.log !== null) this.log(`previous offer (min) ${myPrevSumValue + minPrevEnemyValue} >= ${mySumValue + minEnemyValue}`);
+				return 'back';			
+			}
+		}				
+		//TODO: очень агрессивная политика, может отпугнуть соперника
+		//особенно, если есть вариант, когда при текущем предложении, он получит 0
+		if (minEnemyValue >= MIN_AVERAGE_ENEMY_VALUE)
+			if (this.isFirstPlayer || mySumValue < MIN_MY_SUM_VALUE_TO_REDUCE_OFFER){//если я первый игрок или моя выручка достаточно снижена, играем агрессивно
+				let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer);
+				let averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer);
+				if (myPrevSumValue + averageEnemyPrevValue > mySumValue + averageEnemyValue){
+					if (this.log !== null) this.log(`previous offer (max sum value) ${myPrevSumValue + averageEnemyPrevValue} > ${mySumValue + averageEnemyValue}`);
+					return 'back';			
+				}
+			}
+		return 'forward';
+	}
 	
-    offer(o){
-		let mySumValue;
-        let i;
-        let currOffer;
+    offer(o){		
+        let i;        
 
         let suggestedSumValue = 0;
         let enemyOffer = null;
 
-        let maxSumValue = this.getMaxSumValue();
-        const MIN_AVERAGE_ENEMY_VALUE = maxSumValue * 0.3;
-		const MIN_MY_SUM_VALUE_TO_REDUCE_OFFER = maxSumValue*0.5 + 1;
+        let maxSumValue = this.getMaxSumValue();		
 		const MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER = maxSumValue * 0.8;
+		const MIN_AVERAGE_ENEMY_VALUE = maxSumValue * 0.3;
 
 		if (this.log !== null) this.log(`${this.rounds} rounds left`);
 
@@ -306,139 +374,195 @@ module.exports = class Agent {
 		if (this.log != null) this.log(`returnBackOfferIndex ${returnBackOfferIndex}`);		
 
 		let currOfferIndex = prevOfferIndex;
-		let poorEnemyOfferIndex = -1;
-		while (currOfferIndex < this.possibleOffers.length - 1){
-			currOfferIndex++;
-			//TODO: не предлагать уже предложенное
-			//if (this.getOfferIndex(this.possibleOffers[currOfferIndex], this.myOffers) !== -1) continue;			
+		let maxValue = 0;	
+		
+		for (let i = prevOfferIndex + 1; i < this.possibleOffers.length; ++i){
+			let currOffer = this.possibleOffers[i];
+			let offerSumValue = this.getOfferSumValue(currOffer);
+			if (this.possibleEnemyValues != null){
+				let enemyCurrOffer = this.getEnemyOffer(currOffer);
+				let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer); //средняя выручка соперника с моего текущего предложения
+				if (averageEnemyValue < MIN_AVERAGE_ENEMY_VALUE) {
+					if (this.log != null) this.log(`offer ${currOffer} is too poor for my enemy`);
+				}
+			}
+			
+			if (offerSumValue >= maxValue){
+				currOfferIndex = i;
+				maxValue = offerSumValue;
+			}
+		}		
+		
+		
+		let currOffer = this.possibleOffers[currOfferIndex];
+		let mySumValue = this.getOfferSumValue(this.possibleOffers[currOfferIndex]);	
+		if (this.log !== null) this.log(`curr offer: ${currOffer} (${mySumValue})`);
 
-            currOffer = this.possibleOffers[currOfferIndex];
-            mySumValue = this.getOfferSumValue(currOffer);
-			if (this.log !== null) this.log(`curr offer: ${currOffer} (${mySumValue})`);
+		let isBadOffer = this.isZeroOffer(currOffer) || this.isTooPoorOffer(currOffer);
+	
+		if (isBadOffer){
+			currOfferIndex = returnBackOfferIndex;
+			if (this.log !== null) this.log('is too poor offer');
+		}
+		else {
+			let isPoorOffer = this.isPoorOffer(currOffer);
+			if (isPoorOffer){
+				currOfferIndex = returnBackOfferIndex;
+				if (this.log !== null) this.log('is poor offer');
+			}
+			else{
+				
+				let enemyCurrOffer = this.getEnemyOffer(currOffer);		//текущее предложение (если смотреть со стороны соперника)
+
+				if (prevOfferIndex >= 0){
+					
+					let res = this.getCurrOfferIndex(prevOfferIndex, enemyOffer, enemyCurrOffer, suggestedSumValue, mySumValue);
+					if (res == 'accept') return;
+					if (res == 'back') currOfferIndex = returnBackOfferIndex;
+					//иначе двигаемся дальше	
+				}
+			}
+		}
+
+
+		
+
+
+
+		// let currOfferIndex = prevOfferIndex;
+		// let poorEnemyOfferIndex = -1;// индекс последнего предложения, которое мы пропустили, т.к. оно слошком плохое для соперника
+		// while (currOfferIndex < this.possibleOffers.length - 1){
+		// 	currOfferIndex++;
+		// 	//TODO: не предлагать уже предложенное
+		// 	//if (this.getOfferIndex(this.possibleOffers[currOfferIndex], this.myOffers) !== -1) continue;			
+
+        //     currOffer = this.possibleOffers[currOfferIndex];
+        //     mySumValue = this.getOfferSumValue(currOffer);
+		// 	if (this.log !== null) this.log(`curr offer: ${currOffer} (${mySumValue})`);
 			
 			
-			if (currOfferIndex < this.possibleOffers.length - 1 && 
-				mySumValue <= this.getOfferSumValue(this.possibleOffers[currOfferIndex + 1])) {
-				if (this.log !== null) this.log(`the next my offer is better for me`);
-				continue
-			}
+		// 	if (currOfferIndex < this.possibleOffers.length - 1 && 
+		// 		mySumValue <= this.getOfferSumValue(this.possibleOffers[currOfferIndex + 1])) {
+		// 		if (this.log !== null) this.log(`the next my offer is better for me`);
+		// 		continue
+		// 	}
 
-			//if current offer if zero value for me or too cheap, suggest preveous one		
-            let isBadOffer = this.isZeroOffer(currOffer) || this.isTooPoorOffer(currOffer);
-            if (isBadOffer){
-				currOfferIndex = poorEnemyOfferIndex >-1 ? poorEnemyOfferIndex : returnBackOfferIndex;
-				if (this.log !== null) this.log('is too poor offer');
-				break				
-			}
+		// 	//if current offer if zero value for me or too cheap, suggest preveous one		
+        //     let isBadOffer = this.isZeroOffer(currOffer) || this.isTooPoorOffer(currOffer);
+        //     if (isBadOffer){
+		// 		currOfferIndex = poorEnemyOfferIndex >-1 ? poorEnemyOfferIndex : returnBackOfferIndex;
+		// 		if (this.log !== null) this.log('is too poor offer');
+		// 		break				
+		// 	}
 
-            let isPoorOffer = this.isPoorOffer(currOffer);
-            if (isPoorOffer){
-				//TODO: второй игрок может сильно опустить свою цену (напр., до 4 за 3 хода до конца)
-                // let needMakePoorOffer = !this.isFirstPlayer && isSameEnemyOffer;
-                // if (!needMakePoorOffer){
-					currOfferIndex = poorEnemyOfferIndex > -1 ? poorEnemyOfferIndex : returnBackOfferIndex;
-					if (this.log !== null) this.log('is poor offer');
-					break
-				// }
-			}			
+        //     let isPoorOffer = this.isPoorOffer(currOffer);
+        //     if (isPoorOffer){
+		// 		//TODO: второй игрок может сильно опустить свою цену (напр., до 4 за 3 хода до конца)
+        //         // let needMakePoorOffer = !this.isFirstPlayer && isSameEnemyOffer;
+        //         // if (!needMakePoorOffer){
+		// 			currOfferIndex = poorEnemyOfferIndex > -1 ? poorEnemyOfferIndex : returnBackOfferIndex;
+		// 			if (this.log !== null) this.log('is poor offer');
+		// 			break
+		// 		// }
+		// 	}			
 
-			currOffer = this.possibleOffers[currOfferIndex];
+		// 	currOffer = this.possibleOffers[currOfferIndex];
 
 
-            let enemyCurrOffer = this.getEnemyOffer(currOffer);		//текущее предложение (если смотреть со стороны соперника)
+        //     let enemyCurrOffer = this.getEnemyOffer(currOffer);		//текущее предложение (если смотреть со стороны соперника)
 
-			if (prevOfferIndex >= 0){
+		// 	if (prevOfferIndex >= 0){
 
-                let prevOffer = this.possibleOffers[prevOfferIndex];
-                let myPrevSumValue = this.getOfferSumValue(prevOffer);	//моя выручка с прошлого (отличного от текущего) предложения
-                let minEnemyValue = Number.MAX_SAFE_INTEGER; 			//минимальная выручка соперника с текущего предложения
-                let maxEnemyValue = 0;									//максимальная выручка соперника с текущего предложения
-                let minPrevEnemyValue = Number.MAX_SAFE_INTEGER;		//минимальная выручка соперника с прошлого предложения
-                let maxPrevEnemyValue = 0;								//максимальная выручка соперника с прошлого предложения
+        //         let prevOffer = this.possibleOffers[prevOfferIndex];
+        //         let myPrevSumValue = this.getOfferSumValue(prevOffer);	//моя выручка с прошлого (отличного от текущего) предложения
+        //         let minEnemyValue = Number.MAX_SAFE_INTEGER; 			//минимальная выручка соперника с текущего предложения
+        //         let maxEnemyValue = 0;									//максимальная выручка соперника с текущего предложения
+        //         let minPrevEnemyValue = Number.MAX_SAFE_INTEGER;		//минимальная выручка соперника с прошлого предложения
+        //         let maxPrevEnemyValue = 0;								//максимальная выручка соперника с прошлого предложения
 
-                let enemyPrevOffer = this.getEnemyOffer(prevOffer);		//прошлое предложение (если смотреть со стороны соперника)
+        //         let enemyPrevOffer = this.getEnemyOffer(prevOffer);		//прошлое предложение (если смотреть со стороны соперника)
 
-                let maxEnemyValueWantsNow = 0;							//максимальная выручка, которую может заработать соперник со СВОЕГО предложения
+        //         let maxEnemyValueWantsNow = 0;							//максимальная выручка, которую может заработать соперник со СВОЕГО предложения
 
 						
 
-				for (i in this.possibleEnemyValues){
-                    let pev = this.possibleEnemyValues[i];
-                    let enemyValue = this.getOfferSumValueWithValues(enemyCurrOffer, pev);
-					if (enemyValue < minEnemyValue) minEnemyValue = enemyValue;		
-					if (enemyValue < maxEnemyValue) maxEnemyValue = enemyValue;
-                    let prevEnemyValue = this.getOfferSumValueWithValues(enemyPrevOffer, pev);
-					if (prevEnemyValue < minPrevEnemyValue) minPrevEnemyValue = prevEnemyValue;
-					if (prevEnemyValue > maxPrevEnemyValue) maxPrevEnemyValue = prevEnemyValue;
+		// 		for (i in this.possibleEnemyValues){
+        //             let pev = this.possibleEnemyValues[i];
+        //             let enemyValue = this.getOfferSumValueWithValues(enemyCurrOffer, pev);
+		// 			if (enemyValue < minEnemyValue) minEnemyValue = enemyValue;		
+		// 			if (enemyValue < maxEnemyValue) maxEnemyValue = enemyValue;
+        //             let prevEnemyValue = this.getOfferSumValueWithValues(enemyPrevOffer, pev);
+		// 			if (prevEnemyValue < minPrevEnemyValue) minPrevEnemyValue = prevEnemyValue;
+		// 			if (prevEnemyValue > maxPrevEnemyValue) maxPrevEnemyValue = prevEnemyValue;
 
-                    let enemyValueWantsNow = this.getOfferSumValueWithValues(enemyOffer, pev);
-					if (enemyValueWantsNow > maxEnemyValueWantsNow) maxEnemyValueWantsNow = enemyValueWantsNow;
+        //             let enemyValueWantsNow = this.getOfferSumValueWithValues(enemyOffer, pev);
+		// 			if (enemyValueWantsNow > maxEnemyValueWantsNow) maxEnemyValueWantsNow = enemyValueWantsNow;
 
-					if (this.log !== null) this.log(`${pev} sugg now: ${enemyValue} sugg prev: ${prevEnemyValue} prev index: ${prevOfferIndex} wants now: ${enemyValueWantsNow}`);
-				}			
+		// 			if (this.log !== null) this.log(`${pev} sugg now: ${enemyValue} sugg prev: ${prevEnemyValue} prev index: ${prevOfferIndex} wants now: ${enemyValueWantsNow}`);
+		// 		}			
 				
-				//Мое текущее предложение уменьшает максимальную суммарную выручку игроков (по сравнению с текущим предложением соперника)
-				if (suggestedSumValue + maxEnemyValueWantsNow > mySumValue + maxEnemyValue){				
-					if (suggestedSumValue >= maxEnemyValueWantsNow){//я заработаю не меньше соперника
-						if (this.isFirstPlayer && this.rounds === 1 || !this.isFirstPlayer && this.rounds <= 2) {
-                            if (this.log !== null) this.log(`fair deal`);
-                            return;
-                        }
-                        else{
-                            if (this.log !== null) this.log(`fair deal. But we have a lot of time. What about my previous offer?`);
-                            currOfferIndex = returnBackOfferIndex;
-                            break
-						}
-					}
-				}
+		// 		//Мое текущее предложение уменьшает максимальную суммарную выручку игроков (по сравнению с текущим предложением соперника)
+		// 		if (suggestedSumValue + maxEnemyValueWantsNow > mySumValue + maxEnemyValue){				
+		// 			if (suggestedSumValue >= maxEnemyValueWantsNow){//я заработаю не меньше соперника
+		// 				if (this.isFirstPlayer && this.rounds === 1 || !this.isFirstPlayer && this.rounds <= 2) {
+        //                     if (this.log !== null) this.log(`fair deal`);
+        //                     return;
+        //                 }
+        //                 else{
+        //                     if (this.log !== null) this.log(`fair deal. But we have a lot of time. What about my previous offer?`);
+        //                     currOfferIndex = returnBackOfferIndex;
+        //                     break
+		// 				}
+		// 			}
+		// 		}
 
-				//минимальная суммарная выручка с прошлого предложения была >= минимальной суммарной выручке с этого				
-				if (myPrevSumValue + minPrevEnemyValue >= mySumValue + minEnemyValue){
-					if (mySumValue <= minPrevEnemyValue){//моя выручка c этого предложения не больше, чем минимальная выручка соперника с прошлого предложения
-						//т.о. максимизируем суммарную выручку и зарабатываем не меньше соперника						
-						if (this.log !== null) this.log(`previous offer (min) ${myPrevSumValue + minPrevEnemyValue} >= ${mySumValue + minEnemyValue}`);
-						currOfferIndex = returnBackOfferIndex;
-						break
-					}
-				}				
-				//TODO: очень агрессивная политика, может отпугнуть соперника
-				//особенно, если есть вариант, когда при текущем предложении, он получит 0
-				if (minEnemyValue >= MIN_AVERAGE_ENEMY_VALUE)
-					if (this.isFirstPlayer || mySumValue < MIN_MY_SUM_VALUE_TO_REDUCE_OFFER){//если я первый игрок или моя выручка достаточно снижена, играем агрессивно
-						let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer);
-						let averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer);
-						if (myPrevSumValue + averageEnemyPrevValue > mySumValue + averageEnemyValue){
-							if (this.log !== null) this.log(`previous offer (max sum value) ${myPrevSumValue + averageEnemyPrevValue} > ${mySumValue + averageEnemyValue}`);
-							currOfferIndex = returnBackOfferIndex;
-							break
-						}
-					}
-			}
-			if (this.possibleEnemyValues != null){//null на 1 шаге 1 игрока
-				//мое текущее предложение достаточно выгодно для соперника
-				//нет смысла дальше его уменьшать
-                let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer); //средняя выручка соперника с моего текущего предложения
-                if (averageEnemyValue >= MIN_AVERAGE_ENEMY_VALUE) {
-					if (prevOfferIndex >= 0){
-						let prevOffer = this.possibleOffers[prevOfferIndex];
-						let enemyPrevOffer = this.getEnemyOffer(prevOffer);
-						let averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer);
-						if (averageEnemyValue <= averageEnemyPrevValue){
-							this.log(`current average enemy value is not more than previous ${averageEnemyValue} <= ${averageEnemyPrevValue}`);
-						}
-						else break;						
-					}
-					else break;					
-				}
-				else {
-					if (this.log != null) this.log(`too bad for my enemy ${averageEnemyValue}`);
-					poorEnemyOfferIndex = currOfferIndex;
-				}
-			}	
-			else{				
-				break
-			}
-		}
+		// 		//минимальная суммарная выручка с прошлого предложения была >= минимальной суммарной выручке с этого				
+		// 		if (myPrevSumValue + minPrevEnemyValue >= mySumValue + minEnemyValue){
+		// 			if (mySumValue <= minPrevEnemyValue){//моя выручка c этого предложения не больше, чем минимальная выручка соперника с прошлого предложения
+		// 				//т.о. максимизируем суммарную выручку и зарабатываем не меньше соперника						
+		// 				if (this.log !== null) this.log(`previous offer (min) ${myPrevSumValue + minPrevEnemyValue} >= ${mySumValue + minEnemyValue}`);
+		// 				currOfferIndex = returnBackOfferIndex;
+		// 				break
+		// 			}
+		// 		}				
+		// 		//TODO: очень агрессивная политика, может отпугнуть соперника
+		// 		//особенно, если есть вариант, когда при текущем предложении, он получит 0
+		// 		if (minEnemyValue >= MIN_AVERAGE_ENEMY_VALUE)
+		// 			if (this.isFirstPlayer || mySumValue < MIN_MY_SUM_VALUE_TO_REDUCE_OFFER){//если я первый игрок или моя выручка достаточно снижена, играем агрессивно
+		// 				let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer);
+		// 				let averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer);
+		// 				if (myPrevSumValue + averageEnemyPrevValue > mySumValue + averageEnemyValue){
+		// 					if (this.log !== null) this.log(`previous offer (max sum value) ${myPrevSumValue + averageEnemyPrevValue} > ${mySumValue + averageEnemyValue}`);
+		// 					currOfferIndex = returnBackOfferIndex;
+		// 					break
+		// 				}
+		// 			}
+		// 	}
+		// 	if (this.possibleEnemyValues != null){//null на 1 шаге 1 игрока
+		// 		//мое текущее предложение достаточно выгодно для соперника
+		// 		//нет смысла дальше его уменьшать
+        //         let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer); //средняя выручка соперника с моего текущего предложения
+        //         if (averageEnemyValue >= MIN_AVERAGE_ENEMY_VALUE) {
+		// 			if (prevOfferIndex >= 0){
+		// 				let prevOffer = this.possibleOffers[prevOfferIndex];
+		// 				let enemyPrevOffer = this.getEnemyOffer(prevOffer);
+		// 				let averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer);
+		// 				if (averageEnemyValue <= averageEnemyPrevValue){
+		// 					this.log(`current average enemy value is not more than previous ${averageEnemyValue} <= ${averageEnemyPrevValue}`);
+		// 				}
+		// 				else break;						
+		// 			}
+		// 			else break;					
+		// 		}
+		// 		else {
+		// 			if (this.log != null) this.log(`too bad for my enemy ${averageEnemyValue}`);
+		// 			poorEnemyOfferIndex = currOfferIndex;
+		// 		}
+		// 	}	
+		// 	else{				
+		// 		break
+		// 	}
+		// }
 
 
         currOffer = this.possibleOffers[currOfferIndex];
