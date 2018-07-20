@@ -44,13 +44,14 @@ module.exports = class Agent {
 	// 	return this.possibleOffers.length - 1;
 	// }
 
-	getPreviosOfferIndex(){		
+	getMaxPreviosOfferIndex(){		
+		let maxIndex = -1;
 		for (let i = this.myOffers.length - 1; i >= 0; -- i){
 			let offer = this.myOffers[i];
 			let index = this.getOfferIndex(offer, this.possibleOffers);
-			if (index >= 0) return index;
+			if (index > maxIndex) maxIndex = index;			
 		}
-		return -1;
+		return maxIndex;
 	}
 
 	getReturnBackOfferIndex(){		
@@ -270,7 +271,7 @@ module.exports = class Agent {
 		if (minEnemyValue >= MIN_AVERAGE_ENEMY_VALUE)
 			if (this.isFirstPlayer || mySumValue < MIN_MY_SUM_VALUE_TO_REDUCE_OFFER){//если я первый игрок или моя выручка достаточно снижена, играем агрессивно
 				let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer, this.possibleEnemyValues);
-				let averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer, this.possibleEnemyValues);
+				let averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer, this.possibleEnemyValues);				
 				if (myPrevSumValue + averageEnemyPrevValue > mySumValue + averageEnemyValue){
 					if (this.log !== null) this.log(`previous offer (max sum value) ${myPrevSumValue + averageEnemyPrevValue} > ${mySumValue + averageEnemyValue}`);
 					return 'back';			
@@ -379,11 +380,11 @@ module.exports = class Agent {
 			for (let i = 0; i < this.possibleEnemyValues.length; ++i)
 				if (this.log !== null) this.log(this.possibleEnemyValues[i]);
 
-		let prevOfferIndex = this.getPreviosOfferIndex();
+		let prevOfferIndex = this.getMaxPreviosOfferIndex();
 		let returnBackOfferIndex = this.getReturnBackOfferIndex();	
 		if (this.log !== null) 
-			if (this.myOffers.length > 0)
-				this.log(`prev offer ${this.myOffers[this.myOffers.length - 1]}`);
+			if (prevOfferIndex >= 0)
+				this.log(`prev offer ${this.possibleOffers[prevOfferIndex]}`);
 		if (this.log != null) this.log(`returnBackOfferIndex ${returnBackOfferIndex}`);		
 
 		let currOfferIndex = prevOfferIndex;
