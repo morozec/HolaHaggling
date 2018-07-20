@@ -68,19 +68,27 @@ module.exports = class Agent {
 		if (index === -1) return 0;		
 		
 		let offer = this.possibleOffers[index];
+		let offerSum = this.getOfferSumValue(offer);
 		let enemyOffer = this.getEnemyOffer(offer);
-		let averageEnemyValue = this.getAverageEnemyValue(enemyOffer, this.possibleEnemyValues);
-		
+		let averageEnemyValue = this.getAverageEnemyValue(enemyOffer, this.possibleEnemyValues);		
 		
 		for (let i = this.myOffers.length - 2; i >= 0; --i){
-			let currOffer = this.myOffers[i];
-			if (this.getOfferSumValue(currOffer) === this.getOfferSumValue(this.possibleOffers[index])) continue;
+			let currOffer = this.myOffers[i];	
+			let currOfferSum = this.getOfferSumValue(currOffer);		
 			let currIndex = this.getOfferIndex(currOffer, this.possibleOffers);
 			if (currIndex !== -1){
 				let currEnemyOffer = this.getEnemyOffer(currOffer);
 				let currAverageEnemyValue = this.getAverageEnemyValue(currEnemyOffer, this.possibleEnemyValues);
-				if (currAverageEnemyValue < averageEnemyValue) return index;
-				else index = currIndex;
+				if (currAverageEnemyValue > averageEnemyValue) {
+					index = currIndex;
+					averageEnemyValue = currAverageEnemyValue;
+					offerSum = currOfferSum;
+				}
+				else if (currAverageEnemyValue == averageEnemyValue && currOfferSum > offerSum) {
+					index = currIndex;
+					averageEnemyValue = currAverageEnemyValue;
+					offerSum = currOfferSum;
+				}				
 			}			
 		}
 		return index;
@@ -383,7 +391,7 @@ module.exports = class Agent {
 		let returnBackOfferIndex = this.getReturnBackOfferIndex();	
 		if (this.log !== null) 
 			if (prevOfferIndex >= 0)
-				this.log(`prev offer ${this.possibleOffers[prevOfferIndex]}`);
+				this.log(`max prev offer ${this.possibleOffers[prevOfferIndex]}`);
 		if (this.log != null) this.log(`returnBackOfferIndex ${returnBackOfferIndex}`);		
 
 		let currOfferIndex = prevOfferIndex;
