@@ -134,10 +134,9 @@ module.exports = class Agent {
 		return res;
 	}
 
-	isSameEnemyOffer(enemyOffer){//предложение противника совпадает с предложением на прошлом шаге
-		if (this.previousEnemyOffer == null) return false;
-		for (let i = 0; i < enemyOffer.length; ++i)
-			if (enemyOffer[i] !== this.previousEnemyOffer[i]) return false;
+	isSameOffer(offer1, offer2){//предложение противника совпадает с предложением на прошлом шаге		
+		for (let i = 0; i < offer1.length; ++i)
+			if (offer1[i] !== offer2[i]) return false;
 		return true;
 	}
 
@@ -316,7 +315,7 @@ module.exports = class Agent {
 			}			  
 			
 			
-			isSameEnemyOffer = this.isSameEnemyOffer(enemyOffer);
+			isSameEnemyOffer = this.previousEnemyOffer !== null && this.isSameOffer(enemyOffer, this.previousEnemyOffer);
 			this.previousEnemyOffer = enemyOffer;
 
             suggestedSumValue = this.getOfferSumValue(o);
@@ -414,6 +413,7 @@ module.exports = class Agent {
 		if (this.log !== null) this.log(`curr offer: ${currOffer} (${mySumValue})`);
 
 		let isBadOffer = this.isZeroOffer(currOffer) || this.isTooPoorOffer(currOffer);
+		let isCycledOffer = this.isCycledOffer(returnBackOfferIndex);
 	
 		if (isBadOffer){
 			currOfferIndex = returnBackOfferIndex;
@@ -421,19 +421,25 @@ module.exports = class Agent {
 		}
 		else {
 			let isPoorOffer = this.isPoorOffer(currOffer);
-			if (isPoorOffer){
+			if (isPoorOffer && !isCycledOffer){
 				currOfferIndex = returnBackOfferIndex;
 				if (this.log !== null) this.log('is poor offer');
 			}
-			else{
+			else {
 				
 				let enemyCurrOffer = this.getEnemyOffer(currOffer);		//текущее предложение (если смотреть со стороны соперника)
 
 				if (prevOfferIndex >= 0){
 					
 					let res = this.getCurrOfferResult(prevOfferIndex, enemyOffer, enemyCurrOffer, suggestedSumValue, mySumValue);
-					if (res == 'accept') return;
-					if (res == 'back') currOfferIndex = returnBackOfferIndex;
+					if (res === 'accept') return;
+					if (res === 'back'){
+						if (!isCycledOffer)
+							currOfferIndex = returnBackOfferIndex;
+						else {
+							if (this.log != null) this.log(`is cycled offer`);
+						}
+					}
 					//иначе двигаемся дальше	
 				}
 			}
@@ -487,9 +493,25 @@ module.exports = class Agent {
 		return true;
 	}
 
-	isPoorOffer(o){
+	isCycledOffer(returnBackOfferIndex){
+		const MAX_REPEATING_COUNT_TO_MAKE_POOR_OFFER = 2;
+		if (this.isFirstPlayer) return false;
+		
+		let repeatingCount = 0;
+		for (let i = this.myOffers.length - 1; i >= 0; --i){
+			if (!this.isSameOffer(this.myOffers[i], this.possibleOffers[returnBackOfferIndex])) break;
+			repeatingCount++;
+		}
+		
+		return repeatingCount >= MAX_REPEATING_COUNT_TO_MAKE_POOR_OFFER;		
+	}
+
+	isPoorOffer(o){		
+
 		let sumValue = this.getOfferSumValue(o);
 		if (this.max_rounds === 5 && this.getMaxSumValue() === 10){
+			
+
 			if (this.rounds <= 2){
 				if (sumValue < 5) return true;
 				return false;
