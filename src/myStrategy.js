@@ -29,7 +29,7 @@ module.exports = class Agent {
 		this.previousEnemyOffer = null;			
 		
 		this.myOffers = [];
-		this.enemyOffers = [];		
+		this.enemyOffers = [counts];
 	}
 
 	// getPreviosOfferIndex(){
@@ -156,11 +156,12 @@ module.exports = class Agent {
 		this.possibleOffers = this.getNotMaxCountOffers();
 		this.possibleOffers.sort(comparator(this.values));		
 
-		let possibleEnemyValues = this.getPossibleEnemyValues(this.enemyOffers[0], false, excludeBigZeroOfferValues);
-		this.possibleOffers = this.updatePossibleOffersByZeroEnemyValue(this.enemyOffers[0].length, possibleEnemyValues, this.possibleOffers);	
+		let possibleEnemyValues = this.getPossibleEnemyValues(this.enemyOffers[1], false, excludeBigZeroOfferValues);
+        possibleEnemyValues = this.updatePossibleEnemyValues(this.enemyOffers[1], possibleEnemyValues, this.enemyOffers[0]);
+        this.possibleOffers = this.updatePossibleOffersByZeroEnemyValue(this.enemyOffers[1].length, possibleEnemyValues, this.possibleOffers);
 		this.possibleOffers = this.removeZeroAverageEnemyValuePossibleOffers(possibleEnemyValues, this.possibleOffers);
 		
-		for (let i = 0, j = 1; i < this.myOffers.length, j < this.enemyOffers.length; ++i, ++j){					
+		for (let i = 0, j = 2; i < this.myOffers.length, j < this.enemyOffers.length; ++i, ++j){
 			possibleEnemyValues = this.updatePossibleEnemyValues(this.enemyOffers[j], possibleEnemyValues, this.enemyOffers[j-1]);			
 			possibleEnemyValues = this.updatePossibleEnemyValuesByMyOffer(this.enemyOffers[j], this.myOffers[i], possibleEnemyValues);		
 			this.possibleOffers = this.removeZeroAverageEnemyValuePossibleOffers(possibleEnemyValues, this.possibleOffers);	
@@ -307,9 +308,8 @@ module.exports = class Agent {
             if (this.possibleEnemyValues == null){
 				this.possibleEnemyValues = this.getPossibleEnemyValues(enemyOffer, true, true);				
 			}
-			else{
-				this.possibleEnemyValues = this.updatePossibleEnemyValues(enemyOffer, this.possibleEnemyValues, this.enemyOffers[this.enemyOffers.length - 1]);
-			}
+			this.possibleEnemyValues = this.updatePossibleEnemyValues(enemyOffer, this.possibleEnemyValues, this.enemyOffers[this.enemyOffers.length - 1]);
+
 			if (this.myOffers.length > 0)
 				this.possibleEnemyValues = this.updatePossibleEnemyValuesByMyOffer(enemyOffer, this.myOffers[this.myOffers.length - 1], this.possibleEnemyValues);
 
@@ -657,6 +657,7 @@ module.exports = class Agent {
 	}
 
 	updatePossibleEnemyValues(enemyOffer, possibleEnemyValues, previousEnemyOffer){
+
         let res = [];
 		
 		for (let i = 0; i < possibleEnemyValues.length; ++i){
@@ -666,7 +667,7 @@ module.exports = class Agent {
             let minNotReduced = Number.MAX_SAFE_INTEGER;
 			for (let j = 0; j < pev.length; ++j){
 
-                let delta = enemyOffer[j] - previousEnemyOffer;
+                let delta = enemyOffer[j] - previousEnemyOffer[j];
 
 				if (delta < 0){
 					if (pev[j] > maxReduced){
