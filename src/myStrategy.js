@@ -224,7 +224,7 @@ module.exports = class Agent {
 		let maxSumValue = this.getMaxSumValue();       
 		const MIN_MY_SUM_VALUE_TO_REDUCE_OFFER = maxSumValue*0.5 + 1;
  		const MIN_AVERAGE_ENEMY_VALUE = maxSumValue * 0.3;
- 		const DELTA_MAX_SUM_VALUE = this.isFirstPlayer ? 0 : maxSumValue * 0.2;
+ 		const DELTA_MAX_SUM_VALUE = this.isFirstPlayer || this.rounds >= 3 ? 0 : maxSumValue * 0.2;
 
 		let prevOffer = this.possibleOffers[prevOfferIndex];
 		let myPrevSumValue = this.getOfferSumValue(prevOffer);	//моя выручка с прошлого (отличного от текущего) предложения
