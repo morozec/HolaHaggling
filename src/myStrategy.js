@@ -279,15 +279,16 @@ module.exports = class Agent {
 		}				
 		//TODO: очень агрессивная политика, может отпугнуть соперника
 		//особенно, если есть вариант, когда при текущем предложении, он получит 0
-		if (minEnemyValue >= MIN_AVERAGE_ENEMY_VALUE)
-			if (mySumValue < MIN_MY_SUM_VALUE_TO_REDUCE_OFFER){//если я первый игрок или моя выручка достаточно снижена, играем агрессивно
-				let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer, this.possibleEnemyValues);
-				let averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer, this.possibleEnemyValues);				
-				if (myPrevSumValue + averageEnemyPrevValue - DELTA_MAX_SUM_VALUE > mySumValue + averageEnemyValue){
-					if (this.log !== null) this.log(`previous offer (max sum value) ${myPrevSumValue + averageEnemyPrevValue} > ${mySumValue + averageEnemyValue}`);
-					return 'back';			
-				}
-			}
+		if (minEnemyValue >= MIN_AVERAGE_ENEMY_VALUE) {
+
+            let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer, this.possibleEnemyValues);
+            let averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer, this.possibleEnemyValues);
+            if (myPrevSumValue + averageEnemyPrevValue - DELTA_MAX_SUM_VALUE > mySumValue + averageEnemyValue) {
+                if (this.log !== null) this.log(`previous offer (max sum value) ${myPrevSumValue + averageEnemyPrevValue} > ${mySumValue + averageEnemyValue}`);
+                return 'back';
+            }
+        }
+
 		return 'forward';
 	}
 	
