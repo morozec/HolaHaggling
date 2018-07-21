@@ -222,6 +222,7 @@ module.exports = class Agent {
 		let maxSumValue = this.getMaxSumValue();       
 		const MIN_MY_SUM_VALUE_TO_REDUCE_OFFER = maxSumValue*0.5 + 1;
  		const MIN_AVERAGE_ENEMY_VALUE = maxSumValue * 0.3;
+ 		const DELTA_MAX_SUM_VALUE = this.isFirstPlayer ? 0 : maxSumValue * 0.2;
 
 		let prevOffer = this.possibleOffers[prevOfferIndex];
 		let myPrevSumValue = this.getOfferSumValue(prevOffer);	//моя выручка с прошлого (отличного от текущего) предложения
@@ -277,10 +278,10 @@ module.exports = class Agent {
 		//TODO: очень агрессивная политика, может отпугнуть соперника
 		//особенно, если есть вариант, когда при текущем предложении, он получит 0
 		if (minEnemyValue >= MIN_AVERAGE_ENEMY_VALUE)
-			if (this.isFirstPlayer || mySumValue < MIN_MY_SUM_VALUE_TO_REDUCE_OFFER){//если я первый игрок или моя выручка достаточно снижена, играем агрессивно
+			if (mySumValue < MIN_MY_SUM_VALUE_TO_REDUCE_OFFER){//если я первый игрок или моя выручка достаточно снижена, играем агрессивно
 				let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer, this.possibleEnemyValues);
 				let averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer, this.possibleEnemyValues);				
-				if (myPrevSumValue + averageEnemyPrevValue > mySumValue + averageEnemyValue){
+				if (myPrevSumValue + averageEnemyPrevValue - DELTA_MAX_SUM_VALUE > mySumValue + averageEnemyValue){
 					if (this.log !== null) this.log(`previous offer (max sum value) ${myPrevSumValue + averageEnemyPrevValue} > ${mySumValue + averageEnemyValue}`);
 					return 'back';			
 				}
