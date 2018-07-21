@@ -162,8 +162,10 @@ module.exports = class Agent {
 		this.possibleOffers = this.removeZeroAverageEnemyValuePossibleOffers(possibleEnemyValues, this.possibleOffers);
 		
 		for (let i = 0, j = 2; i < this.myOffers.length, j < this.enemyOffers.length; ++i, ++j){
-			possibleEnemyValues = this.updatePossibleEnemyValues(this.enemyOffers[j], possibleEnemyValues, this.enemyOffers[j-1]);			
-			possibleEnemyValues = this.updatePossibleEnemyValuesByMyOffer(this.enemyOffers[j], this.myOffers[i], possibleEnemyValues);		
+			let newPossibleEnemyValues = this.updatePossibleEnemyValues(this.enemyOffers[j], possibleEnemyValues, this.enemyOffers[j-1]);
+            newPossibleEnemyValues = this.updatePossibleEnemyValuesByMyOffer(this.enemyOffers[j], this.myOffers[i], newPossibleEnemyValues);
+            if (newPossibleEnemyValues.length === 0)return possibleEnemyValues;//костыль, на случай, если враг рандомит
+            possibleEnemyValues = newPossibleEnemyValues;
 			this.possibleOffers = this.removeZeroAverageEnemyValuePossibleOffers(possibleEnemyValues, this.possibleOffers);	
 		}
 		return possibleEnemyValues;
@@ -318,7 +320,7 @@ module.exports = class Agent {
 			if (this.possibleEnemyValues.length == 0){
 				if (this.log != null) this.log("no possible enemy offers left. need update");
 				this.possibleEnemyValues = this.updateWrongDetectedZeroPossibleEnemyValues(true);	
-				if (this.possibleEnemyValues.length == 0){					
+				if (this.possibleEnemyValues.length === 0){
 					this.possibleEnemyValues = this.updateWrongDetectedZeroPossibleEnemyValues(false);	
 				}
 			}			  
