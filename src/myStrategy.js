@@ -438,7 +438,7 @@ module.exports = class Agent {
 			}
 			else {
 
-				let isEnemyBestOffer = this.isEnemyBestOffer(o);
+				let isEnemyBestOffer = this.isEnemyBestOffer(currOffer);
 				if (isEnemyBestOffer){
                     currOfferIndex = returnBackOfferIndex;
                     if (this.log !== null) this.log('is enemy best offer');
@@ -545,10 +545,10 @@ module.exports = class Agent {
 	}
 
 	isEnemyBestOffer(o){
-    	if (this.possibleEnemyValues == null) return false;
+    	if (this.possibleEnemyValues == null || this.rounds <= 2) return false;
     	let enemyOffer = this.getEnemyOffer(o);
     	let maxValue = this.getMaxSumValue();
-    	return this.getOfferSumValue(enemyOffer) < maxValue || this.getOfferSumValue(o) === maxValue;
+    	return this.getAverageEnemyValue(enemyOffer, this.possibleEnemyValues) === maxValue && this.getOfferSumValue(o) !== maxValue;
 	}
 
 	isTooPoorOffer(o){
