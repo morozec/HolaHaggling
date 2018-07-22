@@ -166,7 +166,8 @@ module.exports = class Agent {
             newPossibleEnemyValues = this.updatePossibleEnemyValuesByMyOffer(this.enemyOffers[j], this.myOffers[i], newPossibleEnemyValues);
             if (newPossibleEnemyValues.length === 0)return possibleEnemyValues;//костыль, на случай, если враг рандомит
             possibleEnemyValues = newPossibleEnemyValues;
-			this.possibleOffers = this.removeZeroAverageEnemyValuePossibleOffers(possibleEnemyValues, this.possibleOffers);	
+			this.possibleOffers = this.removeZeroAverageEnemyValuePossibleOffers(possibleEnemyValues, this.possibleOffers);
+			//сортировка не нужна - она будет сделана 1 раз при выходе в методе offer()
 		}
 		return possibleEnemyValues;
 	}
@@ -346,7 +347,7 @@ module.exports = class Agent {
 			}
 			this.possibleOffers = this.removeZeroAverageEnemyValuePossibleOffers(this.possibleEnemyValues, this.possibleOffers);
 
-			this.possibleOffers.sort(comparator(this.values, this.possibleEnemyValues, this.counts));
+			this.possibleOffers.sort(comparator(this.values, this.possibleEnemyValues, this.counts, this.myOffers));
 			//prevOfferIndex = this.getPreviosOfferIndex();
 
 			if (this.log !== null)
@@ -735,7 +736,7 @@ function getOfferSumValue(o, values){
 }
 
 
-function comparator(values, possibleEnemyValues, counts){
+function comparator(values, possibleEnemyValues, counts, myOffers){
 	return function(offerA, offerB){
 		if (possibleEnemyValues == null){
 			let diff = -getOfferSumValue(offerA, values) + getOfferSumValue(offerB, values);
@@ -746,11 +747,16 @@ function comparator(values, possibleEnemyValues, counts){
         let aAverageEnemyValue = getAverageEnemyValue(aEnemyOffer, possibleEnemyValues);
         let bEnemyOffer = getEnemyOffer(offerB, counts);
         let bAverageEnemyOffer = getAverageEnemyValue(bEnemyOffer, possibleEnemyValues);
-		return aAverageEnemyValue - bAverageEnemyOffer
+		let enemyAverageDiff = aAverageEnemyValue - bAverageEnemyOffer;
+		if (myOffers == null || enemyAverageDiff !== 0) return enemyAverageDiff;
+
+		let isOfferAMade = myOffers.indexOf(offerA) >= 0;
+		let isOfferBMade = myOffers.indexOf(offerB) >= 0;
+		if (isOfferAMade && isOfferBMade) return 0;
+		if (isOfferAMade) return -1;
+		return 1;
 	}
 }
-
-module.exports.comparator = comparator
 
 function getAverageEnemyValue(enemyOffer, possibleEnemyValues){
     let res = 0;
