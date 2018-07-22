@@ -357,8 +357,7 @@ module.exports = class Agent {
 					this.log(`${this.possibleOffers[i]} ${sum} ${enemyAverage}`);
 				}
 
-			if (suggestedSumValue >= MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER){
-
+			if (suggestedSumValue >= MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER && this.rounds <= 2){
                 if (this.log !== null) this.log("MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER");
                 return;
 			}
@@ -438,22 +437,29 @@ module.exports = class Agent {
 				if (this.log !== null) this.log('is poor offer');
 			}
 			else {
-				
-				let enemyCurrOffer = this.getEnemyOffer(currOffer);		//текущее предложение (если смотреть со стороны соперника)
 
-				if (prevOfferIndex >= 0){
-					
-					let res = this.getCurrOfferResult(prevOfferIndex, enemyOffer, enemyCurrOffer, suggestedSumValue, mySumValue);
-					if (res === 'accept') return;
-					if (res === 'back'){
-						if (!isCycledOffer)
-							currOfferIndex = returnBackOfferIndex;
-						else {
-							if (this.log != null) this.log(`is cycled offer`);
-						}
-					}
-					//иначе двигаемся дальше	
+				let isEnemyBestOffer = this.isEnemyBestOffer(o);
+				if (isEnemyBestOffer){
+                    currOfferIndex = returnBackOfferIndex;
+                    if (this.log !== null) this.log('is enemy best offer');
 				}
+				else {
+                    let enemyCurrOffer = this.getEnemyOffer(currOffer);		//текущее предложение (если смотреть со стороны соперника)
+
+                    if (prevOfferIndex >= 0) {
+
+                        let res = this.getCurrOfferResult(prevOfferIndex, enemyOffer, enemyCurrOffer, suggestedSumValue, mySumValue);
+                        if (res === 'accept') return;
+                        if (res === 'back') {
+                            if (!isCycledOffer)
+                                currOfferIndex = returnBackOfferIndex;
+                            else {
+                                if (this.log != null) this.log(`is cycled offer`);
+                            }
+                        }
+                        //иначе двигаемся дальше
+                    }
+                }
 			}
 		}
 
@@ -536,6 +542,13 @@ module.exports = class Agent {
 			
 		}        
         return sumValue < this.getMaxSumValue() / 2;
+	}
+
+	isEnemyBestOffer(o){
+    	if (this.possibleEnemyValues == null) return false;
+    	let enemyOffer = this.getEnemyOffer(o);
+    	let maxValue = this.getMaxSumValue();
+    	return this.getOfferSumValue(enemyOffer) < maxValue || this.getOfferSumValue(o) === maxValue;
 	}
 
 	isTooPoorOffer(o){
