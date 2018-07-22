@@ -359,9 +359,11 @@ module.exports = class Agent {
 					this.log(`${this.possibleOffers[i]} ${sum} ${enemyAverage}`);
 				}
 
-			if (suggestedSumValue >= MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER && this.rounds <= 2){
-                if (this.log !== null) this.log("MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER");
-                return;
+			if (suggestedSumValue >= MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER ){
+				if (this.isFirstPlayer && this.rounds <= 2 || !this.isFirstPlayer && this.rounds <= 3) {
+                    if (this.log !== null) this.log("MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER");
+                    return;
+                }
 			}
 
 			if (!this.isFirstPlayer && this.rounds === 1) //I am second and this is the last round
