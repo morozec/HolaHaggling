@@ -506,6 +506,7 @@ module.exports = class Agent {
 	}
 
 	isCycledOffer(returnBackOfferIndex){
+    	if (this.rounds >= 3) return false;//не отлавливаем зацикливание раньше 2 ходов до конца
 		const MAX_REPEATING_COUNT_TO_MAKE_POOR_OFFER = 2;
 		if (this.isFirstPlayer) return false;
 		
