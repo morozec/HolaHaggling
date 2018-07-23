@@ -701,16 +701,43 @@ module.exports = class Agent {
 			}
 		}		
 
-        let res = [];
+		let res = [];
+		
+		
 		
 		for (let i = 0; i < possibleEnemyValues.length; ++i){
             let pev = possibleEnemyValues[i];
 			let currSum = this.getOfferSumValueWithValues(enemyOffer, pev);
-			let prevSum = this.getOfferSumValueWithValues(previousEnemyOffer, pev);			            
-			if (currSum <= prevSum){ //suggested that enemy try to reduce his offer
-				res.push(pev);
-			}
+			let prevSum = this.getOfferSumValueWithValues(previousEnemyOffer, pev);	
+			
+			if (currSum > prevSum) continue;//suggested that enemy try to reduce his offer
+			
+			let maxReduced = 0;
+			let minNotReduced = Number.MAX_SAFE_INTEGER;
+			let hasIncreasedValue = false;
+			for (let j = 0; j < pev.length; ++j){
 
+				let delta = enemyOffer[j] - previousEnemyOffer[j];
+				if (delta > 0){
+					hasIncreasedValue = true;
+					break;
+				}
+
+				if (delta < 0){
+					if (pev[j] > maxReduced){
+						maxReduced = pev[j];
+					}					
+				}				
+				//если для меня товар не имеет ценности, умный противник не будет мне его предлагать
+				else if (delta === 0 && pev[j] !== 0 && enemyOffer[j] !== 0 && this.values[j] != 0){
+					if (pev[j] < minNotReduced){
+						minNotReduced = pev[j];
+					}
+				}
+			}
+			
+			if (!hasIncreasedValue && maxReduced <= minNotReduced)			
+				res.push(pev);
 		}
 		return res;
 	}
