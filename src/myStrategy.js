@@ -262,7 +262,7 @@ module.exports = class Agent {
 					if (this.log !== null) this.log(`fair deal ${suggestedSumValue + maxEnemyValueWantsNow} ${mySumValue + maxEnemyValue}`);
 					return 'accept';
 				}
-				else{
+				else if (suggestedSumValue >= mySumValue) {
 					if (this.log !== null) this.log(`fair deal. But we have a lot of time. What about my previous offer?`);
 					return 'back';
 					
@@ -416,6 +416,16 @@ module.exports = class Agent {
 				if (averageEnemyValue < MIN_AVERAGE_ENEMY_VALUE) {
 					if (this.log != null) this.log(`offer ${currOffer} is too poor for my enemy`);
 					continue;
+				}
+				if (this.possibleEnemyValues.length == 1){
+					let prevEnemyOffer = this.getEnemyOffer(this.possibleOffers[i - 1]);
+					let prevOfferSumValue = this.getOfferSumValue(this.possibleOffers[i - 1]);
+					let prevAverageEnemyValue = this.getAverageEnemyValue(prevEnemyOffer, this.possibleEnemyValues);
+					if (offerSumValue < prevOfferSumValue && averageEnemyValue === prevAverageEnemyValue){
+						if (this.log != null) this.log(`offer ${currOffer} has the same average anamy value as previous`);
+						continue;
+					}
+					
 				}
 			}
 			
