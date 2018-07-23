@@ -157,12 +157,12 @@ module.exports = class Agent {
 		this.possibleOffers.sort(comparator(this.values));		
 
 		let possibleEnemyValues = this.getPossibleEnemyValues(this.enemyOffers[1], false, excludeBigZeroOfferValues);
-        possibleEnemyValues = this.updatePossibleEnemyValues(this.enemyOffers[1], possibleEnemyValues, this.enemyOffers[0]);
+        possibleEnemyValues = this.updatePossibleEnemyValues(this.enemyOffers[1], possibleEnemyValues, this.enemyOffers[0], 0);
         this.possibleOffers = this.updatePossibleOffersByZeroEnemyValue(this.enemyOffers[1].length, possibleEnemyValues, this.possibleOffers);
 		this.possibleOffers = this.removeZeroAverageEnemyValuePossibleOffers(possibleEnemyValues, this.possibleOffers);
 		
 		for (let i = 0, j = 2; i < this.myOffers.length, j < this.enemyOffers.length; ++i, ++j){
-			let newPossibleEnemyValues = this.updatePossibleEnemyValues(this.enemyOffers[j], possibleEnemyValues, this.enemyOffers[j-1]);
+			let newPossibleEnemyValues = this.updatePossibleEnemyValues(this.enemyOffers[j], possibleEnemyValues, this.enemyOffers[j-1], j-1);
             newPossibleEnemyValues = this.updatePossibleEnemyValuesByMyOffer(this.enemyOffers[j], this.myOffers[i], newPossibleEnemyValues);
             if (newPossibleEnemyValues.length === 0)return possibleEnemyValues;//костыль, на случай, если враг рандомит
             possibleEnemyValues = newPossibleEnemyValues;
@@ -314,10 +314,13 @@ module.exports = class Agent {
             if (this.possibleEnemyValues == null){
 				this.possibleEnemyValues = this.getPossibleEnemyValues(enemyOffer, true, true);				
 			}
-			this.possibleEnemyValues = this.updatePossibleEnemyValues(enemyOffer, this.possibleEnemyValues, this.enemyOffers[this.enemyOffers.length - 1]);
-
+			
+			this.possibleEnemyValues = this.updatePossibleEnemyValues(
+				enemyOffer, this.possibleEnemyValues, this.enemyOffers[this.enemyOffers.length - 1], this.enemyOffers.length - 1);
+			
 			if (this.myOffers.length > 0)
 				this.possibleEnemyValues = this.updatePossibleEnemyValuesByMyOffer(enemyOffer, this.myOffers[this.myOffers.length - 1], this.possibleEnemyValues);
+			
 
 			this.enemyOffers.push(enemyOffer);
 			if (this.possibleEnemyValues.length == 0){
@@ -617,12 +620,11 @@ module.exports = class Agent {
 
 	getPossibleEnemyValues(enemyOffer, setZeroValues, excludeBigZeroOfferValues){
     	let currSumValue = this.getMaxSumValue();
-		let possibleEnemyValues = this.getPossibleEnemyValuesRec(enemyOffer, currSumValue, 0);
+		let possibleEnemyValues = this.getPossibleEnemyValuesRec(enemyOffer, currSumValue, 0);		
 		
 		if (excludeBigZeroOfferValues)
-			possibleEnemyValues = this.excludeBigZeroOfferValues(enemyOffer, possibleEnemyValues, setZeroValues);
-        // if (possibleEnemyValues.length === 0)
-        // 	possibleEnemyValues = this.getPossibleEnemyValuesRec(enemyOffer, currSumValue, 0, 1);
+			possibleEnemyValues = this.excludeBigZeroOfferValues(enemyOffer, possibleEnemyValues, setZeroValues);		
+        
 		return possibleEnemyValues;
 	}
 
@@ -678,34 +680,27 @@ module.exports = class Agent {
 		return variants;
 	}
 
-	updatePossibleEnemyValues(enemyOffer, possibleEnemyValues, previousEnemyOffer){
+	updatePossibleEnemyValues(enemyOffer, possibleEnemyValues, previousEnemyOffer, lastEnemyOfferIndex){
+
+		let isOfferAlreadyMade = false;
+		for (let i = 0; i <= lastEnemyOfferIndex; ++i){
+			let isSame = this.isSameOffer(enemyOffer, this.enemyOffers[i]);
+			if (isSame){
+				if (this.log != null) this.log('This offer is already made. No data update here')
+				return possibleEnemyValues;
+			}
+		}		
 
         let res = [];
 		
 		for (let i = 0; i < possibleEnemyValues.length; ++i){
             let pev = possibleEnemyValues[i];
-
-            let maxReduced = 0;
-            let minNotReduced = Number.MAX_SAFE_INTEGER;
-			for (let j = 0; j < pev.length; ++j){
-
-                let delta = enemyOffer[j] - previousEnemyOffer[j];
-
-				if (delta < 0){
-					if (pev[j] > maxReduced){
-						maxReduced = pev[j];
-					}					
-				}
-				//если для меня товар не имеет ценности, умный противник не будет мне его предлагать
-				else if (delta === 0 && pev[j] !== 0 && enemyOffer[j] !== 0 && this.values[j] != 0){
-					if (pev[j] < minNotReduced){
-						minNotReduced = pev[j];
-					}
-				}
-			}
-			if (maxReduced <= minNotReduced){
+			let currSum = this.getOfferSumValueWithValues(enemyOffer, pev);
+			let prevSum = this.getOfferSumValueWithValues(previousEnemyOffer, pev);			            
+			if (currSum <= prevSum){ //suggested that enemy try to reduce his offer
 				res.push(pev);
 			}
+
 		}
 		return res;
 	}
