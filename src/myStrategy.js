@@ -353,14 +353,14 @@ module.exports = class Agent {
 			this.possibleOffers.sort(comparator(this.values, this.possibleEnemyValues, this.counts, this.myOffers));
 			//prevOfferIndex = this.getPreviosOfferIndex();
 
-			if (this.log !== null)
-				for (i in this.possibleOffers){		
-					let o = this.possibleOffers[i];
-					let sum = this.getOfferSumValue(o);
-					let enemyOffer = this.getEnemyOffer(o);
-					let enemyAverage = this.getAverageEnemyValue(enemyOffer, this.possibleEnemyValues); 			
-					this.log(`${this.possibleOffers[i]} ${sum} ${enemyAverage}`);
-				}
+			// if (this.log !== null)
+			// 	for (i in this.possibleOffers){		
+			// 		let o = this.possibleOffers[i];
+			// 		let sum = this.getOfferSumValue(o);
+			// 		let enemyOffer = this.getEnemyOffer(o);
+			// 		let enemyAverage = this.getAverageEnemyValue(enemyOffer, this.possibleEnemyValues); 			
+			// 		this.log(`${this.possibleOffers[i]} ${sum} ${enemyAverage}`);
+			// 	}
 
 			if (suggestedSumValue >= MIN_SUGGESTED_VALUE_TO_ACCEPT_OFFER ){
 				if (this.isFirstPlayer && this.rounds <= 2 || !this.isFirstPlayer && this.rounds <= 3) {
@@ -736,7 +736,7 @@ module.exports = class Agent {
 				}
 			}
 			
-			if (!hasIncreasedValue && maxReduced <= minNotReduced)			
+			if (hasIncreasedValue || maxReduced <= minNotReduced)			
 				res.push(pev);
 		}
 		return res;
