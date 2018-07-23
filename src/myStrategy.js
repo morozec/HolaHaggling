@@ -221,7 +221,7 @@ module.exports = class Agent {
 		return res;
 	}
 
-	getCurrOfferResult(prevOfferIndex, enemyOffer, enemyCurrOffer, suggestedSumValue, mySumValue){
+	getCurrOfferResult(prevOfferIndex, enemyOffer, enemyCurrOffer, suggestedSumValue, mySumValue, isCycledOffer){
 		let maxSumValue = this.getMaxSumValue();       
 		const MIN_MY_SUM_VALUE_TO_REDUCE_OFFER = maxSumValue*0.5 + 1;
  		const MIN_AVERAGE_ENEMY_VALUE = maxSumValue * 0.3;
@@ -277,18 +277,24 @@ module.exports = class Agent {
 				if (this.log !== null) this.log(`previous offer (min) ${myPrevSumValue + minPrevEnemyValue} >= ${mySumValue + minEnemyValue}`);
 				return 'back';			
 			}
-		}				
+		}
+		
+
 		//TODO: очень агрессивная политика, может отпугнуть соперника
 		//особенно, если есть вариант, когда при текущем предложении, он получит 0
 		if (minEnemyValue >= MIN_AVERAGE_ENEMY_VALUE) {
-
-            let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer, this.possibleEnemyValues);
-            let averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer, this.possibleEnemyValues);
-            if (myPrevSumValue + averageEnemyPrevValue - DELTA_MAX_SUM_VALUE > mySumValue + averageEnemyValue) {
-                if (this.log !== null) this.log(`previous offer (max sum value) 
-                ${myPrevSumValue + averageEnemyPrevValue - DELTA_MAX_SUM_VALUE} > ${mySumValue + averageEnemyValue}`);
-                return 'back';
-            }
+			if (isCycledOffer){
+				if (this.log != null) this.log(`is cycled offer`);
+			}
+			else{
+				let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer, this.possibleEnemyValues);
+				let averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer, this.possibleEnemyValues);
+				if (myPrevSumValue + averageEnemyPrevValue - DELTA_MAX_SUM_VALUE > mySumValue + averageEnemyValue) {
+					if (this.log !== null) this.log(`previous offer (max sum value) 
+					${myPrevSumValue + averageEnemyPrevValue - DELTA_MAX_SUM_VALUE} > ${mySumValue + averageEnemyValue}`);
+					return 'back';
+				}
+			}
         }
 
 		return 'forward';
@@ -465,14 +471,10 @@ module.exports = class Agent {
 
                     if (prevOfferIndex >= 0) {
 
-                        let res = this.getCurrOfferResult(prevOfferIndex, enemyOffer, enemyCurrOffer, suggestedSumValue, mySumValue);
+                        let res = this.getCurrOfferResult(prevOfferIndex, enemyOffer, enemyCurrOffer, suggestedSumValue, mySumValue, isCycledOffer);
                         if (res === 'accept') return;
-                        if (res === 'back') {
-                            if (!isCycledOffer)
-                                currOfferIndex = returnBackOfferIndex;
-                            else {
-                                if (this.log != null) this.log(`is cycled offer`);
-                            }
+                        if (res === 'back') {                            
+							currOfferIndex = returnBackOfferIndex; 
                         }
                         //иначе двигаемся дальше
                     }
