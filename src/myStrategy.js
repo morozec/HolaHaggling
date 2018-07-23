@@ -503,7 +503,7 @@ module.exports = class Agent {
         mySumValue = this.getOfferSumValue(currOffer);
 
         if (suggestedSumValue > 0 && mySumValue <= suggestedSumValue){
-			if (this.rounds === 1 || currOfferIndex <= 0){
+			if (this.rounds === 1 || currOfferIndex <= 0){//TODO:возможно, вторым стоит соглашаться, начиная со 2 раунда
 				if (this.log !== null) this.log("my next offer is not better for me");
 				return;
 			}
