@@ -212,12 +212,29 @@ module.exports = class Agent {
 
 	removeZeroAverageEnemyValuePossibleOffers(possibleEnemyValues, possibleOffers){
 		let res = [];
+
 		for (let i = 0; i < possibleOffers.length; ++i){
 			let offer = possibleOffers[i];
 			let enemyOffer = this.getEnemyOffer(offer);
 			let average = this.getAverageEnemyValue(enemyOffer, possibleEnemyValues);
 			if (average > 0) res.push(offer);
 		}
+
+		if (this.rounds <= 2) return res;
+
+		let isAllPoor = true;
+		for(let i = 0; i < res.length; ++i){
+			let isPoor = this.isPoorOffer(res[i]);
+			if (!isPoor) {
+				isAllPoor = false;
+				break;
+			}
+		}
+		if (isAllPoor) {
+			if (this.log != null) this.log('all left offers are poor');
+			return possibleOffers;
+		}
+
 		return res;
 	}
 
