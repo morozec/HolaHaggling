@@ -110,8 +110,54 @@
         "returnBackOfferIndex 0"
     ],
     [
-        "abort",
+        "info",
         1,
-        "TypeError: Cannot read property 'length' of undefined"
+        "curr offer: 0,0,2 (6)"
+    ],
+    [
+        "info",
+        1,
+        "is enemy best offer"
+    ],
+    [
+        "info",
+        1,
+        "my next offer is not better for me"
+    ],
+    [
+        "offer",
+        1
+    ],
+    [
+        "valuation",
+        0,
+        [
+            0,
+            10,
+            0
+        ]
+    ],
+    [
+        "score",
+        0,
+        10
+    ],
+    [
+        "valuation",
+        1,
+        [
+            0,
+            4,
+            3
+        ]
+    ],
+    [
+        "score",
+        1,
+        6
+    ],
+    [
+        "done",
+        true
     ]
 ]

@@ -6,7 +6,7 @@ module.exports = class Agent {
     constructor(me, counts, values, max_rounds, log){
 		this.counts = counts;
 		
-		this.values = values;
+		this.values = values;	
 		this.max_rounds = max_rounds;
         this.rounds = max_rounds;
         this.log = log;
@@ -417,7 +417,7 @@ module.exports = class Agent {
 					if (this.log != null) this.log(`offer ${currOffer} is too poor for my enemy`);
 					continue;
 				}
-				if (this.possibleEnemyValues.length == 1){
+				if (this.possibleEnemyValues.length == 1 && i - 1 >= 0){
 					let prevEnemyOffer = this.getEnemyOffer(this.possibleOffers[i - 1]);
 					let prevOfferSumValue = this.getOfferSumValue(this.possibleOffers[i - 1]);
 					let prevAverageEnemyValue = this.getAverageEnemyValue(prevEnemyOffer, this.possibleEnemyValues);
