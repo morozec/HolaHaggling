@@ -241,7 +241,8 @@ module.exports = class Agent {
 	getCurrOfferResult(prevOfferIndex, enemyOffer, enemyCurrOffer, suggestedSumValue, mySumValue, isCycledOffer){
 		let maxSumValue = this.getMaxSumValue();       
 		const MIN_MY_SUM_VALUE_TO_REDUCE_OFFER = maxSumValue*0.5 + 1;
- 		const MIN_AVERAGE_ENEMY_VALUE = maxSumValue * 0.3;
+		 const MIN_AVERAGE_ENEMY_VALUE = maxSumValue * 0.3;
+		 //TODO: возможно, первому игроку надо выставить ненулевую дельту (хотя бы в последнем раунде)
  		const DELTA_MAX_SUM_VALUE = this.isFirstPlayer || !this.isFirstPlayer && this.rounds >= 3 ? 0 : maxSumValue * 0.2;
 
 		let prevOffer = this.possibleOffers[prevOfferIndex];
@@ -450,8 +451,8 @@ module.exports = class Agent {
 					if (this.log != null) this.log(`offer ${currOffer} is too poor for my enemy`);
 					continue;
 				}
-				if (offerSumValue < prevSumValue && Math.abs(averageEnemyValue - prevAverageEnemyValue) < 0.5){
-					if (this.log != null) this.log(`offer ${currOffer} is worse and has too close averageEnemyValue to prev`);
+				if (offerSumValue < prevSumValue && Math.abs(averageEnemyValue - prevAverageEnemyValue) <= 0.5){
+					if (this.log != null) this.log(`offer ${currOffer} is worse and has too close AEV to prev`);
 					continue;
 				}
 
