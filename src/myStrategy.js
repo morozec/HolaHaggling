@@ -300,20 +300,22 @@ module.exports = class Agent {
 
 		//TODO: очень агрессивная политика, может отпугнуть соперника
 		//особенно, если есть вариант, когда при текущем предложении, он получит 0
-		if (minEnemyValue >= MIN_AVERAGE_ENEMY_VALUE) {
+		
+		//if (minEnemyValue >= MIN_AVERAGE_ENEMY_VALUE) {//TODO: очень странный критерий
 			if (isCycledOffer){
 				if (this.log != null) this.log(`is cycled offer`);
 			}
 			else{
 				let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer, this.possibleEnemyValues);
 				let averageEnemyPrevValue = this.getAverageEnemyValue(enemyPrevOffer, this.possibleEnemyValues);
-				if (myPrevSumValue + averageEnemyPrevValue - DELTA_MAX_SUM_VALUE > mySumValue + averageEnemyValue) {
+				if (averageEnemyPrevValue >= MIN_AVERAGE_ENEMY_VALUE && 
+					myPrevSumValue + averageEnemyPrevValue - DELTA_MAX_SUM_VALUE > mySumValue + averageEnemyValue) {
 					if (this.log !== null) this.log(`previous offer (max sum value) 
 					${myPrevSumValue + averageEnemyPrevValue - DELTA_MAX_SUM_VALUE} > ${mySumValue + averageEnemyValue}`);
 					return 'back';
 				}
 			}
-        }
+		//}		
 
 		return 'forward';
 	}
@@ -417,9 +419,12 @@ module.exports = class Agent {
         
         if (this.log !== null) this.log('');
 		
-		if (this.possibleEnemyValues != null)
+		if (this.possibleEnemyValues != null){
+			let str = "";
 			for (let i = 0; i < this.possibleEnemyValues.length; ++i)
-				if (this.log !== null) this.log(this.possibleEnemyValues[i]);
+				str += this.possibleEnemyValues[i] + " / "
+			if (this.log !== null) this.log(str);
+		}
 
 		let prevOfferIndex = this.getMaxPreviosOfferIndex();
 		let returnBackOfferIndex = this.getReturnBackOfferIndex();	
