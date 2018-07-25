@@ -429,18 +429,33 @@ module.exports = class Agent {
 
 		let currOfferIndex = prevOfferIndex;
 		let maxValue = 0;	
+
+		let prevSumValue = 0;
+		let prevAverageEnemyValue = 0;
+		if (this.possibleEnemyValues != null && prevOfferIndex >= 0){			
+			let prevOffer = this.possibleOffers[prevOfferIndex];
+			prevSumValue = this.getOfferSumValue(prevOffer);
+			let prevEnemyOffer = this.getEnemyOffer(prevOffer);			
+			prevAverageEnemyValue = this.getAverageEnemyValue(prevEnemyOffer, this.possibleEnemyValues);
+		}
 		
 		for (let i = prevOfferIndex + 1; i < this.possibleOffers.length; ++i){
 			let currOffer = this.possibleOffers[i];
 			let offerSumValue = this.getOfferSumValue(currOffer);
+			let averageEnemyValue = 0;
 			if (this.possibleEnemyValues != null){
 				let enemyCurrOffer = this.getEnemyOffer(currOffer);
-				let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer, this.possibleEnemyValues); //средняя выручка соперника с моего текущего предложения
+				averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer, this.possibleEnemyValues); //средняя выручка соперника с моего текущего предложения
 				if (averageEnemyValue < MIN_AVERAGE_ENEMY_VALUE) {
 					if (this.log != null) this.log(`offer ${currOffer} is too poor for my enemy`);
 					continue;
 				}
-				if (this.possibleEnemyValues.length == 1 && i - 1 >= 0){
+				if (offerSumValue < prevSumValue && Math.abs(averageEnemyValue - prevAverageEnemyValue) < 0.5){
+					if (this.log != null) this.log(`offer ${currOffer} is worse and has too close averageEnemyValue to prev`);
+					continue;
+				}
+
+				if (this.possibleEnemyValues.length == 1 && i - 1 >= 0){//случай, когда точно знаем цены соперника
 					let prevEnemyOffer = this.getEnemyOffer(this.possibleOffers[i - 1]);
 					let prevOfferSumValue = this.getOfferSumValue(this.possibleOffers[i - 1]);
 					let prevAverageEnemyValue = this.getAverageEnemyValue(prevEnemyOffer, this.possibleEnemyValues);
@@ -454,7 +469,7 @@ module.exports = class Agent {
 			
 			if (offerSumValue >= maxValue){
 				currOfferIndex = i;
-				maxValue = offerSumValue;
+				maxValue = offerSumValue;				
 			}
 		}		
 		
