@@ -259,7 +259,7 @@ module.exports = class Agent {
 		if (this.possibleEnemyValues != null && this.possibleEnemyValues.length === 1) DELTA_MAX_SUM_VALUE = 0;
 		else{
 			if (this.isFirstPlayer){
-				if (this.rounds >= 4) DELTA_MAX_SUM_VALUE = 0;
+				if (this.rounds >= 4 || this.rounds === 1) DELTA_MAX_SUM_VALUE = 0;
 				else DELTA_MAX_SUM_VALUE = maxSumValue * 0.1;
 			}
 			else{
