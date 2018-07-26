@@ -544,7 +544,8 @@ module.exports = class Agent {
 					continue;
 				}
 
-				if (prevOffer != null){					
+				let remainingOffer = this.possibleOffers.length - 1 - i; //-1, т.к. всегда есть нулевой
+				if (prevOffer != null && this.rounds < remainingOffer){	//не успеем сделать все предложения				
 					let diffCount = 0;	
 					let isWrongDiffCount = false;				
 					for (let i = 0; i < currOffer.length; ++i){
