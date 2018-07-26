@@ -548,17 +548,23 @@ module.exports = class Agent {
 					let diffCount = 0;	
 					let isWrongDiffCount = false;				
 					for (let i = 0; i < currOffer.length; ++i){
-						let diff = prevOffer[i] - currOffer[i];
-						if (diff === 1) {							
+						let diff = prevOffer[i] - currOffer[i];						
+						if (diff === 1) {
+							let hasZeroPev = false;												
 							for (let j = 0; j < this.possibleEnemyValues.length; ++j){
 								let pev = this.possibleEnemyValues[j];
-								if (pev[i] === 0) {
+								if (pev[i] === 0) {		
+									hasZeroPev = true;							
 									diffCount++;
 									break;
 								}
 							}
+							if (!hasZeroPev){
+								isWrongDiffCount = true;
+								break;
+							}
 						}
-						else if (diffCount != 0){
+						else if (diff != 0){
 							isWrongDiffCount = true;
 							break;
 						}
