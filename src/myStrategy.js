@@ -167,7 +167,8 @@ module.exports = class Agent {
 		this.possibleOffers.sort(comparator(this.values));		
 
 		let possibleEnemyValues = this.getPossibleEnemyValues(this.enemyOffers[1], false, excludeBigZeroOfferValues);
-        possibleEnemyValues = this.updatePossibleEnemyValues(this.enemyOffers[1], possibleEnemyValues, this.enemyOffers[0], 0);
+		possibleEnemyValues = this.updatePossibleEnemyValues(this.enemyOffers[1], possibleEnemyValues, this.enemyOffers[0], 0);	
+
         this.possibleOffers = this.updatePossibleOffersByZeroEnemyValue(this.enemyOffers[1].length, possibleEnemyValues, this.possibleOffers);
 		this.possibleOffers = this.removeZeroAverageEnemyValuePossibleOffers(possibleEnemyValues, this.possibleOffers);
 		
@@ -849,11 +850,17 @@ function comparator(values, possibleEnemyValues, counts, myOffers){
         let bEnemyOffer = getEnemyOffer(offerB, counts);
         let bAverageEnemyOffer = getAverageEnemyValue(bEnemyOffer, possibleEnemyValues);
 		let enemyAverageDiff = aAverageEnemyValue - bAverageEnemyOffer;
-		if (myOffers == null || enemyAverageDiff !== 0) return enemyAverageDiff;
+
+		let diffCount = 0;
+		for (let i = 0; i < offerA.length; ++i){
+			if (offerA[i] != offerB[i]) diffCount++;
+		}
+
+		if (myOffers == null || diffCount <= 1 || Math.abs(enemyAverageDiff) > 1) return enemyAverageDiff;
 
 		let isOfferAMade = myOffers.indexOf(offerA) >= 0;
 		let isOfferBMade = myOffers.indexOf(offerB) >= 0;
-		if (isOfferAMade && isOfferBMade) return 0;
+		if (isOfferAMade && isOfferBMade) return enemyAverageDiff;
 		if (isOfferAMade) return -1;
 		return 1;
 	}
