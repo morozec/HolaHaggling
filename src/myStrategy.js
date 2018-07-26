@@ -847,7 +847,15 @@ module.exports = class Agent {
 			let maxReduced = 0;
 			let minNotReduced = Number.MAX_SAFE_INTEGER;
 			// let hasIncreasedValue = false;
+
+			let hasZeroValueForNonZeroOffer = false;
+
 			for (let j = 0; j < pev.length; ++j){
+
+				if (enemyOffer[j] > 0 && pev[j] === 0){
+					hasZeroValueForNonZeroOffer = true;
+					break;
+				}
 
 				let delta = enemyOffer[j] - previousEnemyOffer[j];
 				// if (delta > 0){
@@ -868,7 +876,7 @@ module.exports = class Agent {
 				}
 			}
 			
-			if (maxReduced <= minNotReduced)			
+			if (!hasZeroValueForNonZeroOffer && maxReduced <= minNotReduced)			
 				res.push(pev);
 		}
 		return res;
