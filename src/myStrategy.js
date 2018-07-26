@@ -348,26 +348,48 @@ module.exports = class Agent {
 		return 'forward';
 	}
 
-	getMinEnemyValue(enemyOffer, possibleEnemyValues){
-		return getMinEnemyValue(enemyOffer, possibleEnemyValues);
-	}
+	// getMinEnemyValue(enemyOffer, possibleEnemyValues){
+	// 	return getMinEnemyValue(enemyOffer, possibleEnemyValues);
+	// }
 
-	getMaxEnemyValue(enemyOffer, possibleEnemyValues){
-		return getMaxEnemyValue(enemyOffer, possibleEnemyValues);
-	}
+	// getMaxEnemyValue(enemyOffer, possibleEnemyValues){
+	// 	return getMaxEnemyValue(enemyOffer, possibleEnemyValues);
+	// }
 
-	isPossiblyBetterOffer(enemyOffer){
-		let maxValue = this.getMaxEnemyValue(enemyOffer, this.possibleEnemyValues);	
+	isPossiblyBetterOffer(enemyOffer){		
+
+		for (let i = 0; i < this.possibleEnemyValues.length; ++i){
+			let pev = this.possibleEnemyValues[i];
+			let enemyOfferValue = this.getOfferSumValueWithValues(enemyOffer, pev); 
+			let isEnemyOfferBetter = true;
+			for (let j = 0; j < this.myOffers.length; ++j){
+				let myOffer = this.myOffers[j];
+				let currEnemyOffer = this.getEnemyOffer(myOffer);
+				let currEnemyOfferValue = this.getOfferSumValueWithValues(currEnemyOffer, pev);
+				if (currEnemyOfferValue >= enemyOfferValue) {//есть хотя бы 1 прошлый ход, который не хуже текущего
+					isEnemyOfferBetter = false;
+					break;
+				}
+			}
+			if (isEnemyOfferBetter) return true; //нашли такой pev, при котором текущий ход лучше всех прошлых
+		}
+		return false;
+
+		// for (let i = 0; i < this.myOffers.length; ++i){
+		// 	let currEnemyOffer = this.getEnemyOffer(myOffer);
+		// 	let currEnemyOfferValue = this.getOfferSumValueWithValues(currEnemyOffer, this.possibleEnemyValues);
+		// }
+
+		// let maxValue = this.getMaxEnemyValue(enemyOffer, this.possibleEnemyValues);		
+		// for (let i = 0; i < this.myOffers.length; ++i){
+		// 	let myOffer = this.myOffers[i];
+		// 	let currEnemyOffer = this.getEnemyOffer(myOffer);
+		// 	let currMinValue = this.getMinEnemyValue(currEnemyOffer, this.possibleEnemyValues);
+		// 	// this.log(`${enemyOffer} max ${maxValue} min ${currMinValue}`)
+		// 	if (currMinValue >= maxValue) return false;//есть хотя бы 1 мой прошлый оффер, минимум который не хуже максимума текущего
+		// }		
 		
-		for (let i = 0; i < this.myOffers.length; ++i){
-			let myOffer = this.myOffers[i];
-			let currEnemyOffer = this.getEnemyOffer(myOffer);
-			let currMinValue = this.getMinEnemyValue(currEnemyOffer, this.possibleEnemyValues);
-			//this.log(`${enemyOffer} max ${maxValue} min ${currMinValue}`)
-			if (currMinValue >= maxValue) return false;
-		}		
-		
-		return true;
+		// return true;
 	}
 	
     offer(o){		
@@ -935,25 +957,41 @@ function comparator(values, possibleEnemyValues, counts, myOffers){
 		let isOfferAMade = myOffers.indexOf(offerA) >= 0;
 		let isOfferBMade = myOffers.indexOf(offerB) >= 0;
 		if (isOfferAMade && isOfferBMade || !isOfferAMade && !isOfferBMade) return enemyAverageDiff;
+		
 
-		let aMinValue = getMinEnemyValue(aEnemyOffer, possibleEnemyValues);
-		let aMaxValue = getMaxEnemyValue(aEnemyOffer, possibleEnemyValues);
-		let bMinValue = getMinEnemyValue(bEnemyOffer, possibleEnemyValues);
-		let bMaxValue = getMaxEnemyValue(bEnemyOffer, possibleEnemyValues);		
+		// let aMinValue = getMinEnemyValue(aEnemyOffer, possibleEnemyValues);
+		// let aMaxValue = getMaxEnemyValue(aEnemyOffer, possibleEnemyValues);
+		// let bMinValue = getMinEnemyValue(bEnemyOffer, possibleEnemyValues);
+		// let bMaxValue = getMaxEnemyValue(bEnemyOffer, possibleEnemyValues);		
 
 		if (isOfferAMade){
 			if (enemyAverageDiff <= 0) return -1;
-			if (bMaxValue > aMinValue) return -1;
+			if (isPossiblyBetterOffer(bEnemyOffer, aEnemyOffer, possibleEnemyValues)) return -1;
 			return 1;
 		}
 		else{//isOfferBMade
-			if (enemyAverageDiff => 0) return 1;
-			if (aMaxValue > bMinValue) return 1;
+			if (enemyAverageDiff >= 0) return 1;
+			if (isPossiblyBetterOffer(aEnemyOffer, bEnemyOffer, possibleEnemyValues)) return 1;
 			return - 1;
 		}
 		
 	}
 }
+
+function isPossiblyBetterOffer(aEnemyOffer, bEnemyOffer, possibleEnemyValues){	
+
+	for (let i = 0; i < possibleEnemyValues.length; ++i){
+		let pev = possibleEnemyValues[i];
+		let aEnemyOfferValue = getOfferSumValue(aEnemyOffer, pev); 			
+		let bEnemyOfferValue = getOfferSumValue(bEnemyOffer, pev);
+
+		if (aEnemyOfferValue > bEnemyOfferValue) {
+			return true;
+		}	
+	}
+	return false;	
+}
+
 
 function getAverageEnemyValue(enemyOffer, possibleEnemyValues){
     let res = 0;
@@ -966,25 +1004,25 @@ function getAverageEnemyValue(enemyOffer, possibleEnemyValues){
 	return res;
 }
 
-function getMinEnemyValue(enemyOffer, possibleEnemyValues){
-	let minValue = Number.MAX_SAFE_INTEGER;   
-	for (let i = 0; i < possibleEnemyValues.length; ++i){
-		let pev = possibleEnemyValues[i];		
-		let sum = getOfferSumValue(enemyOffer, pev);
-		if (sum < minValue) minValue = sum;
-	}	
-	return minValue;
-}
+// function getMinEnemyValue(enemyOffer, possibleEnemyValues){
+// 	let minValue = Number.MAX_SAFE_INTEGER;   
+// 	for (let i = 0; i < possibleEnemyValues.length; ++i){
+// 		let pev = possibleEnemyValues[i];		
+// 		let sum = getOfferSumValue(enemyOffer, pev);
+// 		if (sum < minValue) minValue = sum;
+// 	}	
+// 	return minValue;
+// }
 
-function getMaxEnemyValue(enemyOffer, possibleEnemyValues){
-	let maxValue = 0;   
-	for (let i = 0; i < possibleEnemyValues.length; ++i){
-		let pev = possibleEnemyValues[i];		
-		let sum = getOfferSumValue(enemyOffer, pev);
-		if (sum > maxValue) maxValue = sum;
-	}	
-	return maxValue;
-}
+// function getMaxEnemyValue(enemyOffer, possibleEnemyValues){
+// 	let maxValue = 0;   
+// 	for (let i = 0; i < possibleEnemyValues.length; ++i){
+// 		let pev = possibleEnemyValues[i];		
+// 		let sum = getOfferSumValue(enemyOffer, pev);
+// 		if (sum > maxValue) maxValue = sum;
+// 	}	
+// 	return maxValue;
+// }
 
 function getEnemyOffer(offer, counts){
     let enemyOffer = [];
