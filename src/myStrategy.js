@@ -522,11 +522,12 @@ module.exports = class Agent {
 					continue;
 				}
 
-				if (prevOffer != null){
-					let diffCount = 0;					
+				if (prevOffer != null){					
+					let diffCount = 0;	
+					let isWrongDiffCount = false;				
 					for (let i = 0; i < currOffer.length; ++i){
 						let diff = prevOffer[i] - currOffer[i];
-						if (diff === 1) {
+						if (diff === 1) {							
 							for (let j = 0; j < this.possibleEnemyValues.length; ++j){
 								let pev = this.possibleEnemyValues[j];
 								if (pev[i] === 0) {
@@ -535,9 +536,13 @@ module.exports = class Agent {
 								}
 							}
 						}
+						else if (diffCount != 0){
+							isWrongDiffCount = true;
+							break;
+						}
 					}	
 					
-					if (offerSumValue < prevSumValue && diffCount == 1){
+					if (offerSumValue < prevSumValue && !isWrongDiffCount && diffCount === 1){
 						if (this.log != null) this.log(`offer ${currOffer} is worse and possible loose value`);
 						lastAverageEnemyValue = averageEnemyValue;
 						lastSumValue = offerSumValue;
