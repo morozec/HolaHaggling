@@ -254,8 +254,22 @@ module.exports = class Agent {
 		const MIN_MY_SUM_VALUE_TO_REDUCE_OFFER = maxSumValue*0.5 + 1;
 		 const MIN_AVERAGE_ENEMY_VALUE = maxSumValue * 0.3;
 		 //TODO: возможно, первому игроку надо выставить ненулевую дельту (хотя бы в последнем раунде)
-		 let DELTA_MAX_SUM_VALUE = this.isFirstPlayer || !this.isFirstPlayer && this.rounds >= 3 ? maxSumValue * 0.1 : maxSumValue * 0.2;
-		 if (this.possibleEnemyValues != null && this.possibleEnemyValues.length === 1) DELTA_MAX_SUM_VALUE = 0;
+
+		let DELTA_MAX_SUM_VALUE = maxSumValue * 0.2;
+		if (this.possibleEnemyValues != null && this.possibleEnemyValues.length === 1) DELTA_MAX_SUM_VALUE = 0;
+		else{
+			if (this.isFirstPlayer){
+				if (this.rounds >= 4) DELTA_MAX_SUM_VALUE = 0;
+				else DELTA_MAX_SUM_VALUE = maxSumValue * 0.1;
+			}
+			else{
+				if (this.rounds >= 3) DELTA_MAX_SUM_VALUE = maxSumValue * 0.1;				
+			}
+		}
+
+		// let DELTA_MAX_SUM_VALUE = this.isFirstPlayer || !this.isFirstPlayer && this.rounds >= 3 ? maxSumValue * 0.1 : maxSumValue * 0.2;
+		// if (this.rounds >= 4) DELTA_MAX_SUM_VALUE -= maxSumValue * 0.1;
+		
 
 		let returnBackOffer = this.possibleOffers[returnBackOfferIndex];
 		let returnBackSumValue = this.getOfferSumValue(returnBackOffer);	//моя выручка с прошлого (отличного от текущего) предложения
@@ -644,8 +658,7 @@ module.exports = class Agent {
 
 		let sumValue = this.getOfferSumValue(o);
 		if (this.max_rounds === 5 && this.getMaxSumValue() === 10){
-			
-			
+						
 			if (this.rounds <= 2){
 				if (sumValue < 5) return true;
 				return false;
