@@ -243,7 +243,7 @@ module.exports = class Agent {
 		const MIN_MY_SUM_VALUE_TO_REDUCE_OFFER = maxSumValue*0.5 + 1;
 		 const MIN_AVERAGE_ENEMY_VALUE = maxSumValue * 0.3;
 		 //TODO: возможно, первому игроку надо выставить ненулевую дельту (хотя бы в последнем раунде)
- 		const DELTA_MAX_SUM_VALUE = this.isFirstPlayer || !this.isFirstPlayer && this.rounds >= 3 ? 0 : maxSumValue * 0.2;
+ 		const DELTA_MAX_SUM_VALUE = this.isFirstPlayer || !this.isFirstPlayer && this.rounds >= 3 ? maxSumValue * 0.1 : maxSumValue * 0.2;
 
 		let prevOffer = this.possibleOffers[prevOfferIndex];
 		let myPrevSumValue = this.getOfferSumValue(prevOffer);	//моя выручка с прошлого (отличного от текущего) предложения
@@ -311,7 +311,7 @@ module.exports = class Agent {
 				if (averageEnemyPrevValue >= MIN_AVERAGE_ENEMY_VALUE && 
 					myPrevSumValue + averageEnemyPrevValue - DELTA_MAX_SUM_VALUE > mySumValue + averageEnemyValue) {
 					if (this.log !== null) this.log(`previous offer (max sum value) 
-					${myPrevSumValue + averageEnemyPrevValue - DELTA_MAX_SUM_VALUE} > ${mySumValue + averageEnemyValue}`);
+					${myPrevSumValue + averageEnemyPrevValue } - ${DELTA_MAX_SUM_VALUE} > ${mySumValue + averageEnemyValue}`);
 					return 'back';
 				}
 			}
