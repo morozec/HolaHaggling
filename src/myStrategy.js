@@ -914,10 +914,48 @@ module.exports = class Agent {
 				}
 			}
 			
-			if (!hasZeroValueForNonZeroOffer && maxReduced <= minNotReduced)			
-				res.push(pev);
+			if (!hasZeroValueForNonZeroOffer && maxReduced <= minNotReduced)	{
+                res.push(pev);
+			}
 		}
-		return res;
+
+        let alwaysZeroIndexes = [];
+        for (let i = 0; i < enemyOffer.length; ++i) {
+            if (enemyOffer[i] > 0) continue;
+            let isAlwaysZero = true;
+            for (let j = 1; j < this.enemyOffers.length; ++j) { //j === 0 - это запросить все
+                if (this.enemyOffers[j][i] > 0) {
+                    isAlwaysZero = false;
+                    break;
+                }
+            }
+            if (isAlwaysZero) alwaysZeroIndexes.push(i);
+        }
+
+        let rightZeroRes = [];
+		for (let i = 0; i < res.length; ++i){
+        	let maxZeroValue = 0;
+        	let minNonZeroValue = Number.MAX_SAFE_INTEGER;
+        	for (let j = 0; j < res[i].length; ++j){
+        		if (alwaysZeroIndexes.indexOf(j) >= 0){
+        			if (res[i][j] > maxZeroValue){
+        				maxZeroValue = res[i][j];
+					}
+				}
+				else{
+        			if (res[i][j] < minNonZeroValue){
+        				minNonZeroValue = res[i][j];
+					}
+				}
+			}
+			if (maxZeroValue > minNonZeroValue) {
+        		if (this.log != null) this.log(`offer ${res[i]} has wrong zero offer values`);
+        		continue;
+			}
+        	rightZeroRes.push(res[i]);
+		}
+
+		return rightZeroRes.length > 0 ? rightZeroRes : res;
 	}
 	
 	//если соперник делает предложение, которое по данным ценам менее (или столь же) выгодно, чем мое, то отбрасываем данные цены 
