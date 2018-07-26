@@ -448,7 +448,7 @@ module.exports = class Agent {
 			}
 			this.possibleOffers = this.removeZeroAverageEnemyValuePossibleOffers(this.possibleEnemyValues, this.possibleOffers);
 
-			this.possibleOffers.sort(comparator(this.values, this.possibleEnemyValues, this.counts, this.myOffers));
+			this.possibleOffers.sort(comparator(this.values, this.possibleEnemyValues, this.counts, this.myOffers, this.rounds));
 			//prevOfferIndex = this.getPreviosOfferIndex();
 
 			if (this.log !== null)
@@ -943,7 +943,7 @@ function getOfferSumValue(o, values){
 }
 
 
-function comparator(values, possibleEnemyValues, counts, myOffers){
+function comparator(values, possibleEnemyValues, counts, myOffers, rounds){
 	return function(offerA, offerB){
 		if (possibleEnemyValues == null){
 			let diff = -getOfferSumValue(offerA, values) + getOfferSumValue(offerB, values);
@@ -962,7 +962,7 @@ function comparator(values, possibleEnemyValues, counts, myOffers){
 
 		let isOfferAMade = myOffers.indexOf(offerA) >= 0;
 		let isOfferBMade = myOffers.indexOf(offerB) >= 0;
-		if (isOfferAMade && isOfferBMade || !isOfferAMade && !isOfferBMade) return enemyAverageDiff;
+		if (isOfferAMade && isOfferBMade || !isOfferAMade && !isOfferBMade || rounds === 1) return enemyAverageDiff;
 		
 
 		// let aMinValue = getMinEnemyValue(aEnemyOffer, possibleEnemyValues);
