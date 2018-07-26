@@ -713,6 +713,10 @@ module.exports = class Agent {
 		let sumValue = this.getOfferSumValue(o);
 		if (this.max_rounds === 5 && this.getMaxSumValue() === 10){
 						
+			if (this.rounds == 4){
+				if (sumValue < 7) return true;
+				return false;
+			}
 			if (this.rounds <= 2){
 				if (sumValue < 5) return true;
 				return false;
