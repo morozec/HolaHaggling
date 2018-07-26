@@ -487,14 +487,17 @@ module.exports = class Agent {
 		let maxValue = 0;	
 		let maxAverageEnemyValue = 0;
 
-		let prevSumValue = 0;
-		let prevAverageEnemyValue = 0;
-		if (this.possibleEnemyValues != null && prevOfferIndex >= 0){			
-			let prevOffer = this.possibleOffers[prevOfferIndex];
-			prevSumValue = this.getOfferSumValue(prevOffer);
-			let prevEnemyOffer = this.getEnemyOffer(prevOffer);			
-			prevAverageEnemyValue = this.getAverageEnemyValue(prevEnemyOffer, this.possibleEnemyValues);
-		}
+		// let prevSumValue = 0;
+		// let prevAverageEnemyValue = 0;
+		// if (this.possibleEnemyValues != null && prevOfferIndex >= 0){			
+		// 	let prevOffer = this.possibleOffers[prevOfferIndex];
+		// 	prevSumValue = this.getOfferSumValue(prevOffer);
+		// 	let prevEnemyOffer = this.getEnemyOffer(prevOffer);			
+		// 	prevAverageEnemyValue = this.getAverageEnemyValue(prevEnemyOffer, this.possibleEnemyValues);
+		// }
+
+		let prevOffer = prevOfferIndex >= 0 ? this.possibleOffers[prevOfferIndex] : null;
+		let prevSumValue = prevOffer != null ? this.getOfferSumValue(prevOffer) : 0;
 
 		let lastAverageEnemyValue = -1;
 		let lastSumValue = -1;
@@ -519,13 +522,31 @@ module.exports = class Agent {
 					continue;
 				}
 
-				if (offerSumValue < prevSumValue && averageEnemyValue - prevAverageEnemyValue >=0 && averageEnemyValue - prevAverageEnemyValue <= 0.5 ){
-					if (this.log != null) this.log(`offer ${currOffer} is worse and has too close AEV to prev`);
-					lastAverageEnemyValue = averageEnemyValue;
-					lastSumValue = offerSumValue;
-					continue;
+				if (prevOffer != null){
+					let diffCount = 0;					
+					for (let i = 0; i < currOffer.length; ++i){
+						let diff = prevOffer[i] - currOffer[i];
+						if (diff === 1) {
+							for (let j = 0; j < this.possibleEnemyValues.length; ++j){
+								let pev = this.possibleEnemyValues[j];
+								if (pev[i] === 0) {
+									diffCount++;
+									break;
+								}
+							}
+						}
+					}	
+					
+					if (offerSumValue < prevSumValue && diffCount == 1){
+						if (this.log != null) this.log(`offer ${currOffer} is worse and possible loose value`);
+						lastAverageEnemyValue = averageEnemyValue;
+						lastSumValue = offerSumValue;
+						continue;
+					}
+
 				}
 
+				
 				if (this.possibleEnemyValues.length == 1){//случай, когда точно знаем цены соперника				
 					if (offerSumValue < lastSumValue && averageEnemyValue === lastAverageEnemyValue){
 						if (this.log != null) this.log(`offer ${currOffer} has the same average anamy value as previous`);
