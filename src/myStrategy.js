@@ -70,11 +70,24 @@ module.exports = class Agent {
 		let offer = this.possibleOffers[index];
 		let offerSum = this.getOfferSumValue(offer);
 		let enemyOffer = this.getEnemyOffer(offer);
-		let averageEnemyValue = this.getAverageEnemyValue(enemyOffer, this.possibleEnemyValues);		
+		let averageEnemyValue = this.getAverageEnemyValue(enemyOffer, this.possibleEnemyValues);
+
+        let offerCount = 0;
+        for (let k = 0; k  < this.myOffers.length; ++k){
+            if (this.isSameOffer(offer, this.myOffers[k]))
+                offerCount++;
+        }
 		
 		for (let i = this.myOffers.length - 2; i >= 0; --i){
 			let currOffer = this.myOffers[i];	
-			let currOfferSum = this.getOfferSumValue(currOffer);		
+			let currOfferSum = this.getOfferSumValue(currOffer);
+
+            let currOfferCount = 0;
+            for (let k = 0; k  < this.myOffers.length; ++k){
+                if (this.isSameOffer(currOffer, this.myOffers[k]))
+                    currOfferCount++;
+            }
+
 			let currIndex = this.getOfferIndex(currOffer, this.possibleOffers);
 			if (currIndex !== -1){
 				let currEnemyOffer = this.getEnemyOffer(currOffer);
@@ -85,6 +98,7 @@ module.exports = class Agent {
 						index = currIndex;
 						averageEnemyValue = currAverageEnemyValue;
 						offerSum = currOfferSum;
+						offerCount = currOfferCount;
 					}
 				}
 				else{
@@ -92,11 +106,23 @@ module.exports = class Agent {
 						index = currIndex;
 						averageEnemyValue = currAverageEnemyValue;
 						offerSum = currOfferSum;
+                        offerCount = currOfferCount;
 					}
-					else if (currAverageEnemyValue == averageEnemyValue && currOfferSum > offerSum) {
-						index = currIndex;
-						averageEnemyValue = currAverageEnemyValue;
-						offerSum = currOfferSum;
+					else if (currAverageEnemyValue === averageEnemyValue) {
+						if (currOfferSum > offerSum) {
+                            index = currIndex;
+                            averageEnemyValue = currAverageEnemyValue;
+                            offerSum = currOfferSum;
+                            offerCount = currOfferCount;
+                        }
+                        else if (currOfferSum === offerSum){
+							if (currOfferCount < offerCount){
+                                index = currIndex;
+                                averageEnemyValue = currAverageEnemyValue;
+                                offerSum = currOfferSum;
+                                offerCount = currOfferCount;
+							}
+						}
 					}				
 				}
 			}			
