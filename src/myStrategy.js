@@ -261,7 +261,7 @@ module.exports = class Agent {
 
 		let isAllPoor = true;
 		for(let i = 0; i < res.length; ++i){
-			let isPoor = this.isPoorOffer(res[i]);
+			let isPoor = this.isPoorOffer(res[i], false);
 			if (!isPoor) {
 				isAllPoor = false;
 				break;
@@ -659,7 +659,7 @@ module.exports = class Agent {
 			if (this.log !== null) this.log('is too poor offer');
 		}
 		else {
-			let isPoorOffer = this.isPoorOffer(currOffer);
+			let isPoorOffer = this.isPoorOffer(currOffer, true);
 			if (isPoorOffer && !isCycledOffer){
 				currOfferIndex = returnBackOfferIndex;
 				if (this.log !== null) this.log('is poor offer');
@@ -749,9 +749,17 @@ module.exports = class Agent {
 		return repeatingCount >= MAX_REPEATING_COUNT_TO_MAKE_POOR_OFFER;		
 	}
 
-	isPoorOffer(o){		
+	isPoorOffer(o, checkPrev){		
 
 		let sumValue = this.getOfferSumValue(o);
+		if (checkPrev){
+			let maxPrevValue = 0;
+			for (let i = 0; i < this.myOffers.length; ++i){
+				let value = this.getOfferSumValue(this.myOffers[i]);
+				if (value <= sumValue) return false;
+			}
+		}
+
 		if (this.max_rounds === 5 && this.getMaxSumValue() === 10){
 						
 			if (this.rounds == 4){
