@@ -369,7 +369,10 @@ module.exports = class Agent {
 			else{
 				let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer, this.possibleEnemyValues);
 				let averageEnemyPrevValue = this.getAverageEnemyValue(enemyReturnBackOffer, this.possibleEnemyValues);
-				if (averageEnemyPrevValue >= MIN_AVERAGE_ENEMY_VALUE && 
+
+				let needReduce = mySumValue > averageEnemyValue && this.possibleEnemyValues.length > 3;
+				if (!needReduce &&
+					averageEnemyPrevValue >= MIN_AVERAGE_ENEMY_VALUE && 
 					averageEnemyValue >= averageEnemyPrevValue && //мы хотим его рассмотреть этот вариант, хотя он менее выгодный
 					returnBackSumValue + averageEnemyPrevValue - DELTA_MAX_SUM_VALUE > mySumValue + averageEnemyValue) {
 					if (this.log !== null) this.log(`previous offer (max sum value) 
