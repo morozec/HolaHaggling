@@ -429,12 +429,12 @@ module.exports = class Agent {
 		// return true;
 	}
 
-	getRemainigOffers(index){
+	getRemainingOffers(index){
 		let count = 0;
-		for (let i = 0; i < this.possibleOffers.length; ++i ){
+		for (let i = index; i < this.possibleOffers.length; ++i ){
 			let offer = this.possibleOffers[i];
 			let rounds = this.rounds - i;
-			if (rounds <= 0) continue; 
+			if (rounds <= 0) rounds = 1;//рассмотриваем предложения как будто их сделали бы в последнем раунде
 			let isTooPoor = this.isPoorOffer(offer, false, rounds);
 			if (!isTooPoor) count++;
 		}
@@ -585,7 +585,7 @@ module.exports = class Agent {
 				let enemyCurrOffer = this.getEnemyOffer(currOffer);
 				averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer, this.possibleEnemyValues); //средняя выручка соперника с моего текущего предложения
 				//let remainingOffers = this.possibleOffers.length - 1 - i; //-1, т.к. всегда есть нулевой
-				let remainingOffers = this.getRemainigOffers(i);
+				let remainingOffers = this.getRemainingOffers(i);
 
 				if (averageEnemyValue < MIN_AVERAGE_ENEMY_VALUE && stepsLeft < remainingOffers) {
 					if (this.log != null) this.log(`offer ${currOffer} is too poor for my enemy`);
@@ -771,7 +771,6 @@ module.exports = class Agent {
 
 		let sumValue = this.getOfferSumValue(o);
 		if (checkPrev){
-			let maxPrevValue = 0;
 			for (let i = 0; i < this.myOffers.length; ++i){
 				let value = this.getOfferSumValue(this.myOffers[i]);
 				if (value <= sumValue) return false;
