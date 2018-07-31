@@ -261,7 +261,7 @@ module.exports = class Agent {
 
 		let isAllPoor = true;
 		for(let i = 0; i < res.length; ++i){
-			let isPoor = this.isPoorOffer(res[i], false);
+			let isPoor = this.isPoorOffer(res[i], false, this.rounds);
 			if (!isPoor) {
 				isAllPoor = false;
 				break;
@@ -428,6 +428,18 @@ module.exports = class Agent {
 		
 		// return true;
 	}
+
+	getRemainigOffers(index){
+		let count = 0;
+		for (let i = 0; i < this.possibleOffers.length; ++i ){
+			let offer = this.possibleOffers[i];
+			let rounds = this.rounds - i;
+			if (rounds <= 0) continue; 
+			let isTooPoor = this.isPoorOffer(offer, false, rounds);
+			if (!isTooPoor) count++;
+		}
+		return count;
+	}
 	
     offer(o){		
         let i;        
@@ -572,7 +584,8 @@ module.exports = class Agent {
 			if (this.possibleEnemyValues != null){
 				let enemyCurrOffer = this.getEnemyOffer(currOffer);
 				averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer, this.possibleEnemyValues); //средняя выручка соперника с моего текущего предложения
-				let remainingOffers = this.possibleOffers.length - 1 - i; //-1, т.к. всегда есть нулевой
+				//let remainingOffers = this.possibleOffers.length - 1 - i; //-1, т.к. всегда есть нулевой
+				let remainingOffers = this.getRemainigOffers(i);
 
 				if (averageEnemyValue < MIN_AVERAGE_ENEMY_VALUE && stepsLeft < remainingOffers) {
 					if (this.log != null) this.log(`offer ${currOffer} is too poor for my enemy`);
@@ -662,8 +675,10 @@ module.exports = class Agent {
 			if (this.log !== null) this.log('is too poor offer');
 		}
 		else {
-			let isPoorOffer = this.isPoorOffer(currOffer, true);
-			if (isPoorOffer && !isCycledOffer){
+			let isPoorOffer = this.isPoorOffer(currOffer, true, this.rounds);
+			let isPoorEnemyOffer = this.isTooPoorEnemyOffer(this.possibleOffers[returnBackOfferIndex]);
+
+			if (isPoorOffer && !isCycledOffer && !isPoorEnemyOffer){
 				currOfferIndex = returnBackOfferIndex;
 				if (this.log !== null) this.log('is poor offer');
 			}
@@ -752,7 +767,7 @@ module.exports = class Agent {
 		return repeatingCount >= MAX_REPEATING_COUNT_TO_MAKE_POOR_OFFER;		
 	}
 
-	isPoorOffer(o, checkPrev){		
+	isPoorOffer(o, checkPrev, rounds){		
 
 		let sumValue = this.getOfferSumValue(o);
 		if (checkPrev){
@@ -761,15 +776,15 @@ module.exports = class Agent {
 				let value = this.getOfferSumValue(this.myOffers[i]);
 				if (value <= sumValue) return false;
 			}
-		}
+		}		
 
 		if (this.max_rounds === 5 && this.getMaxSumValue() === 10){
 						
-			if (this.rounds == 4){
+			if (rounds == 4){
 				if (sumValue < 7) return true;
 				return false;
 			}
-			if (this.rounds <= 2){
+			if (rounds <= 2){
 				if (sumValue < 5) return true;
 				return false;
 			}
@@ -792,6 +807,14 @@ module.exports = class Agent {
 	isTooPoorOffer(o){
         let sumValue = this.getOfferSumValue(o);
 		return sumValue < this.getMaxSumValue() / 4;
+	}
+
+	isTooPoorEnemyOffer(o){
+		if (this.possibleEnemyValues == null) return false;
+		let enemyOffer = this.getEnemyOffer(o);
+		let averageEnemyValue = this.getAverageEnemyValue(enemyOffer, this.possibleEnemyValues);
+		let maxValue = this.getMaxSumValue();
+		return averageEnemyValue <= maxValue * 0.2;
 	}
 
 	getMaxSumValue(){
