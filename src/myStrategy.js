@@ -895,7 +895,7 @@ module.exports = class Agent {
 					if (pev[j] > maxZerovalue) maxZerovalue = pev[j];
 				}
 				else{
-					if (pev[j] < minNotZeroValue) minNotZeroValue = pev[j];
+					if (pev[j] < minNotZeroValue && this.values[j] > 0) minNotZeroValue = pev[j];
 				}
 			}
 			if (minNotZeroValue >= maxZerovalue){
@@ -995,7 +995,7 @@ module.exports = class Agent {
         let alwaysZeroIndexes = [];
         for (let i = 0; i < enemyOffer.length; ++i) {
             if (enemyOffer[i] > 0) continue;
-            let isAlwaysZero = true;
+            let isAlwaysZero = this.enemyOffers.length > 1;
             for (let j = 1; j < this.enemyOffers.length; ++j) { //j === 0 - это запросить все
                 if (this.enemyOffers[j][i] > 0) {
                     isAlwaysZero = false;
