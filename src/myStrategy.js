@@ -286,7 +286,7 @@ module.exports = class Agent {
 		if (this.possibleEnemyValues != null && this.possibleEnemyValues.length === 1) DELTA_MAX_SUM_VALUE = 0;
 		else{
 			if (this.isFirstPlayer){
-				if (this.rounds === 1) DELTA_MAX_SUM_VALUE = 0;
+				if (this.rounds === 1) DELTA_MAX_SUM_VALUE = -0.01;//чтобы не предлагать равный вариант
 				else DELTA_MAX_SUM_VALUE = maxSumValue * 0.1;
 			}
 			else{
@@ -341,6 +341,13 @@ module.exports = class Agent {
 			}
 		}
 
+		if (suggestedSumValue >= 6 && suggestedSumValue >= maxEnemyValueWantsNow && minPrevEnemyValue <= 4){
+			if (this.isFirstPlayer && this.rounds === 1 || !this.isFirstPlayer && this.rounds <= 2) {
+				if (this.log !== null) this.log(`suggested value is good and better for me ${suggestedSumValue} >= ${maxEnemyValueWantsNow}, ${minPrevEnemyValue} <= 4`);
+				return 'accept';
+			}			
+		}
+
 		//минимальная суммарная выручка с прошлого предложения была >= минимальной суммарной выручке с этого				
 		if (returnBackSumValue + minPrevEnemyValue >= mySumValue + minEnemyValue){
 			if (returnBackSumValue != mySumValue || minPrevEnemyValue != minEnemyValue)//если все одинаково, можно сделать это предложение
@@ -363,10 +370,10 @@ module.exports = class Agent {
 		//особенно, если есть вариант, когда при текущем предложении, он получит 0
 		
 		//if (minEnemyValue >= MIN_AVERAGE_ENEMY_VALUE) {//TODO: очень странный критерий
-			if (isCycledOffer){
-				if (this.log != null) this.log(`is cycled offer`);
-			}
-			else{
+			// if (isCycledOffer){
+			// 	if (this.log != null) this.log(`is cycled offer`);
+			// }
+			// else{
 				let averageEnemyValue = this.getAverageEnemyValue(enemyCurrOffer, this.possibleEnemyValues);
 				let averageEnemyPrevValue = this.getAverageEnemyValue(enemyReturnBackOffer, this.possibleEnemyValues);
 
@@ -379,7 +386,7 @@ module.exports = class Agent {
 					${returnBackSumValue + averageEnemyPrevValue } - ${DELTA_MAX_SUM_VALUE} > ${mySumValue + averageEnemyValue}`);
 					return 'back';
 				}
-			}
+			// }
 		//}		
 
 		return 'forward';
