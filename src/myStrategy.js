@@ -257,7 +257,7 @@ module.exports = class Agent {
 			if (average > 0) res.push(offer);
 		}
 
-		if (this.rounds <= 2) return res;
+		if (this.rounds === 1) return res;
 
 		let isAllPoor = true;
 		for(let i = 0; i < res.length; ++i){
