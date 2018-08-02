@@ -54,11 +54,15 @@ module.exports = class Agent {
 		return maxIndex;
 	}
 
-	getReturnBackOfferIndex(){		
+	getReturnBackOfferIndex(){	
 		
+
 		let index = -1;		
 		for (let i = this.myOffers.length - 1; i >= 0; --i){
 			let offer = this.myOffers[i];
+			let isPossibleLooseValueOffer = this.isPossibleLooseValueOffer(offer);
+			if (isPossibleLooseValueOffer) continue;
+
 			let currIndex = this.getOfferIndex(offer, this.possibleOffers);
 			if (currIndex !== -1) {
 				index = currIndex;
@@ -80,6 +84,9 @@ module.exports = class Agent {
 		
 		for (let i = this.myOffers.length - 2; i >= 0; --i){
 			let currOffer = this.myOffers[i];	
+			let isPossibleLooseValueOffer = this.isPossibleLooseValueOffer(currOffer);
+			if (isPossibleLooseValueOffer) continue;
+
 			let currOfferSum = this.getOfferSumValue(currOffer);
 
             let currOfferCount = 0;
@@ -447,6 +454,47 @@ module.exports = class Agent {
 		}
 		return count;
 	}
+
+	isPossibleLooseValueOffer(currOffer){
+		for (let k = 0; k < this.myOffers.length; ++k){
+			let prevOffer = this.myOffers[k];
+			if (this.isSameOffer(currOffer, prevOffer)) continue;
+	
+			let offerSumValue = this.getOfferSumValue(currOffer);
+			let prevSumValue = this.getOfferSumValue(prevOffer);
+
+			let diffCount = 0;	
+			let isWrongDiffCount = false;				
+			for (let i = 0; i < currOffer.length; ++i){
+				let diff = prevOffer[i] - currOffer[i];						
+				if (diff === 1) {
+					let hasZeroPev = false;												
+					for (let j = 0; j < this.possibleEnemyValues.length; ++j){
+						let pev = this.possibleEnemyValues[j];
+						if (pev[i] === 0) {		
+							hasZeroPev = true;							
+							diffCount++;
+							break;
+						}
+					}
+					if (!hasZeroPev){
+						isWrongDiffCount = true;
+						break;
+					}
+				}
+				else if (diff != 0){
+					isWrongDiffCount = true;
+					break;
+				}
+			}	
+			
+			if (offerSumValue < prevSumValue && !isWrongDiffCount && diffCount === 1){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	
     offer(o){		
         let i;        
@@ -608,33 +656,9 @@ module.exports = class Agent {
 				}
 
 				
-				if (prevOffer != null && stepsLeft < remainingOffers){	//не успеем сделать все предложения				
-					let diffCount = 0;	
-					let isWrongDiffCount = false;				
-					for (let i = 0; i < currOffer.length; ++i){
-						let diff = prevOffer[i] - currOffer[i];						
-						if (diff === 1) {
-							let hasZeroPev = false;												
-							for (let j = 0; j < this.possibleEnemyValues.length; ++j){
-								let pev = this.possibleEnemyValues[j];
-								if (pev[i] === 0) {		
-									hasZeroPev = true;							
-									diffCount++;
-									break;
-								}
-							}
-							if (!hasZeroPev){
-								isWrongDiffCount = true;
-								break;
-							}
-						}
-						else if (diff != 0){
-							isWrongDiffCount = true;
-							break;
-						}
-					}	
-					
-					if (offerSumValue < prevSumValue && !isWrongDiffCount && diffCount === 1){
+				if (stepsLeft < remainingOffers){	//не успеем сделать все предложения				
+					let isPossibleLooseValueOffer = this.isPossibleLooseValueOffer(currOffer);					
+					if (isPossibleLooseValueOffer){
 						if (this.log != null) this.log(`offer ${currOffer} is worse and possible loose value`);
 						lastAverageEnemyValue = averageEnemyValue;
 						lastSumValue = offerSumValue;
