@@ -662,7 +662,7 @@ module.exports = class Agent {
         mySumValue = this.getOfferSumValue(currOffer);
 
         if (suggestedSumValue > 0 && mySumValue <= suggestedSumValue){
-			if (this.rounds === 1 || currOfferIndex <= 0){//TODO:возможно, вторым стоит соглашаться, начиная со 2 раунда
+			if (this.rounds === 1 || !this.isFirstPlayer && this.rounds === 2 && !this.isLastMyOffer(currOffer) || currOfferIndex <= 0){
 				if (this.log !== null) this.log("my next offer is not better for me");
 				return;
 			}
@@ -684,7 +684,16 @@ module.exports = class Agent {
 		if (this.log !== null) this.log(`My actual offer ${currOffer} (${mySumValue})`);
 		this.myOffers.push(currOffer);
         return currOffer;
-	}	
+	}
+
+
+	isLastMyOffer(offer){
+    	let lastOffer = this.possibleOffers[this.possibleOffers.length - 1];
+    	if (Agent.isZeroOffer(lastOffer) && this.possibleOffers.length >= 2){
+    		lastOffer = this.possibleOffers[this.possibleOffers.length - 2];
+		}
+    	return Agent.isSameOffer(offer, lastOffer);
+	}
 
 	getAverageEnemyValue(enemyOffer, possibleEnemyValues){
         let res = 0;
